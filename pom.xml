@@ -28,6 +28,7 @@
 			<artifactId>playerglobal</artifactId>
 			<classifier>${flashplayer.version.major}</classifier>  <!-- the classifier specifies the target flash player major version -->
 			<type>swc</type>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
