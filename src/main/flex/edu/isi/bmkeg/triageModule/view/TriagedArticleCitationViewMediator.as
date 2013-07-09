@@ -2,14 +2,12 @@ package edu.isi.bmkeg.triageModule.view
 {
 
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
-
 	import edu.isi.bmkeg.pagedList.*;
 	import edu.isi.bmkeg.pagedList.model.*;
-
-	import edu.isi.bmkeg.triage.model.*;
 	import edu.isi.bmkeg.triage.events.*;
+	import edu.isi.bmkeg.triage.model.*;
+	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
 	import edu.isi.bmkeg.triage.rl.events.*;
-	
 	import edu.isi.bmkeg.triageModule.events.*;
 	import edu.isi.bmkeg.triageModule.model.*;
 	
@@ -102,7 +100,7 @@ package edu.isi.bmkeg.triageModule.view
 		//
 		private function requestFetchObjects(list:PagedList, index:int, count:int):void 
 		{
-			var td:TriageScore = triageModel.queryTriagedDocument;
+			var td:TriageScore_qo = triageModel.queryTriagedDocument;
 						
 			dispatch(new ListTriageScoreListPagedEvent(td, index, list.pageSize));
 			

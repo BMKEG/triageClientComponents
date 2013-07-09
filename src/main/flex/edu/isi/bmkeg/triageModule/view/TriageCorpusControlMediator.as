@@ -1,9 +1,12 @@
 package edu.isi.bmkeg.triageModule.view
 {
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
+	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.Corpus_qo;
 	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.triage.events.*;
 	import edu.isi.bmkeg.triage.model.*;
+	import edu.isi.bmkeg.triage.model.qo.TriageCorpus_qo;
+	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
 	import edu.isi.bmkeg.triage.rl.events.*;
 	import edu.isi.bmkeg.triageModule.model.TriageModel;
 	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
@@ -61,7 +64,7 @@ package edu.isi.bmkeg.triageModule.view
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// On loading this control, we first list all the corpora on the server
 			var c:Corpus = new Corpus();
-			dispatch(new ListCorpusEvent(new Corpus()));
+			dispatch(new ListCorpusEvent(new Corpus_qo()));
 			
 			
 		}
@@ -77,12 +80,14 @@ package edu.isi.bmkeg.triageModule.view
 		
 		public function dispatchSelectTriageCorpus(event:SelectTriageCorpusEvent):void {
 
-			var ts:TriageScore = new TriageScore();
-			var tc:TriageCorpus = new TriageCorpus();
+			var ts:TriageScore_qo = new TriageScore_qo();
+			var tc:TriageCorpus_qo = new TriageCorpus_qo();
+			var tt:TriageCorpus_qo = new TriageCorpus_qo();
 			
-			tc.vpdmfId = event.vpdmfId;
+			tc.vpdmfId = String(event.vpdmfId);
+			tt.vpdmfId = String(triageModel.targetCorpus.vpdmfId);
 			ts.triageCorpus = tc;
-			ts.targetCorpus = triageModel.targetCorpus;
+			ts.targetCorpus = tt;
 			
 			if(event.inOutCode.length > 0) {
 				ts.inOutCode = event.inOutCode;
@@ -99,7 +104,7 @@ package edu.isi.bmkeg.triageModule.view
 
 			view.currentState = "empty";
 			view.corpusCombo.selectedIndex = -1;
-			dispatch(new ListCorpusEvent(new Corpus()));
+			dispatch(new ListCorpusEvent(new Corpus_qo()));
 			
 		}
 		

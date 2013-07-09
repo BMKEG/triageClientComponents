@@ -1,6 +1,7 @@
 package edu.isi.bmkeg.triageModule.controller
 {	
 	import edu.isi.bmkeg.triage.model.*;
+	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
 	import edu.isi.bmkeg.triage.rl.events.*;
 	import edu.isi.bmkeg.triage.rl.services.ITriageService;
 	import edu.isi.bmkeg.triageModule.model.TriageModel;
@@ -29,8 +30,8 @@ package edu.isi.bmkeg.triageModule.controller
 			service.findTriagedArticleById(event.id);	
 			
 			// go get the updated article from the server for the list
-			var td:TriageScore = new TriageScore();
-			td.vpdmfId = event.id;
+			var td:TriageScore_qo = new TriageScore_qo();
+			td.vpdmfId = String(event.id);
 			service.listTriagedArticle(td);		
 				
 		}

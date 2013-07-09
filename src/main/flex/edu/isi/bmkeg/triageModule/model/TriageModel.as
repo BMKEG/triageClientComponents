@@ -3,13 +3,14 @@ package edu.isi.bmkeg.triageModule.model
 	
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
 	import edu.isi.bmkeg.triage.model.*;
+	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
+	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 	
 	import flash.utils.Dictionary;
 	
 	import mx.collections.ArrayCollection;
 	import mx.utils.UIDUtil;
-
-	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
+	
 	import org.robotlegs.mvcs.Actor;
 
 	[Bindable]
@@ -25,7 +26,7 @@ package edu.isi.bmkeg.triageModule.model
 
 		public var triageCorpus:Corpus;		
 				
-		public var queryTriagedDocument:TriageScore;
+		public var queryTriagedDocument:TriageScore_qo;
 
 		public var currentScore:TriageScore;
 

@@ -21,8 +21,9 @@
 			import edu.isi.bmkeg.digitalLibrary.model.citations.Corpus;
 			import edu.isi.bmkeg.digitalLibrary.rl.events.FindCorpusByIdEvent;
 			import edu.isi.bmkeg.digitalLibrary.rl.events.ListCorpusEvent;
-			import edu.isi.bmkeg.triage.model.TriageCorpus;
 			import edu.isi.bmkeg.triage.events.*;
+			import edu.isi.bmkeg.triage.model.TriageCorpus;
+			import edu.isi.bmkeg.triage.model.qo.TriageCorpus_qo;
 			import edu.isi.bmkeg.triage.rl.events.FindTriageCorpusByIdEvent;
 			import edu.isi.bmkeg.triage.rl.events.ListTriageCorpusEvent;
 			import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
@@ -50,7 +51,7 @@
 					var lvi:LightViewInstance = LightViewInstance(o);
 					var vpdmfId:Number = lvi.vpdmfId;
 					
-					var q:TriageCorpus = new TriageCorpus();
+					var q:TriageCorpus_qo = new TriageCorpus_qo();
 					this.dispatchEvent( new ListTriageCorpusEvent(q) );
 
 					var m:Corpus = new Corpus();
