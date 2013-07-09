@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:hc="com.hillelcoren.components.*"
+		 width="100%" height="100%">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<s:states>
+		<s:State name="empty"/>
+		<s:State name="corpusLoaded"/>
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import edu.isi.bmkeg.digitalLibrary.model.citations.Corpus;
+			import edu.isi.bmkeg.digitalLibrary.rl.events.FindCorpusByIdEvent;
+			import edu.isi.bmkeg.digitalLibrary.rl.events.ListCorpusEvent;
+			import edu.isi.bmkeg.triage.model.TriageCorpus;
+			import edu.isi.bmkeg.triage.events.*;
+			import edu.isi.bmkeg.triage.rl.events.FindTriageCorpusByIdEvent;
+			import edu.isi.bmkeg.triage.rl.events.ListTriageCorpusEvent;
+			import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
+			
+			import mx.collections.ArrayCollection;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			public var corpusList:ArrayCollection = new ArrayCollection();
+
+			[Bindable]
+			public var slaveList:ArrayCollection = new ArrayCollection();
+			
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// When you select a corpus, go get it. 
+			//
+			protected function handle_corpusComboChange(event:IndexChangeEvent):void
+			{
+
+				var i:int = event.newIndex;
+				
+				if( i >= 0 ) {
+					var o:Object = corpusCombo.dataProvider.getItemAt(i);
+					var lvi:LightViewInstance = LightViewInstance(o);
+					var vpdmfId:Number = lvi.vpdmfId;
+					
+					var q:TriageCorpus = new TriageCorpus();
+					this.dispatchEvent( new ListTriageCorpusEvent(q) );
+
+					var m:Corpus = new Corpus();
+					m.vpdmfId = vpdmfId
+					this.dispatchEvent( new FindCorpusByIdEvent(vpdmfId) );
+					
+				} 
+				
+			}
+			
+			protected function handle_triageCorpusComboChange(event:IndexChangeEvent):void
+			{
+				var i:int = event.newIndex;
+				if( i >= 0 ) {
+					var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
+					var vpdmfId:Number= lvi.vpdmfId;
+					this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "") );
+				}
+			}
+
+			protected function handle_inOutButton_all(event:MouseEvent):void {
+				var i:int = triageCorpusCombo.selectedIndex;
+				
+				if( i < 0 )
+					return;
+				
+				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
+				var vpdmfId:Number= lvi.vpdmfId;
+				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "") );
+				
+			}
+			
+			protected function handle_inOutButton_unclassified(event:MouseEvent):void {
+				var i:int = triageCorpusCombo.selectedIndex;
+				
+				if( i < 0 )
+					return;
+				
+				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
+				var vpdmfId:Number= lvi.vpdmfId;
+				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "unclassified") );
+				
+			}
+			
+			protected function handle_inOutButton_in(event:MouseEvent):void {
+				var i:int = triageCorpusCombo.selectedIndex;
+				
+				if( i < 0 )
+					return;
+				
+				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
+				var vpdmfId:Number= lvi.vpdmfId;
+				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "in") );
+				
+			}
+			
+			protected function handle_inOutButton_out(event:MouseEvent):void {
+				var i:int = triageCorpusCombo.selectedIndex;
+				
+				if( i < 0 ) 
+					return; 
+				
+				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
+				var vpdmfId:Number= lvi.vpdmfId;
+				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "out") );
+				
+			}
+			
+			//
+			// Define a custom function for the labelFunction property
+			// to display an Object in the ComboBox control.
+			//
+			public function myLabelFunc(item:Object):String {
+				var lvi:LightViewInstance = LightViewInstance(item);
+				
+				if( lvi == null )
+					return "-";
+				
+				return lvi.vpdmfLabel; 
+			}
+						
+		]]>
+	</fx:Script>
+	
+	<s:Label top="10" fontSize="12" fontWeight="bold"
+			 horizontalCenter="0" text="First, pick a corpus"/>
+
+	<s:Group>
+		<s:layout>
+			 <s:HorizontalLayout />
+		 </s:layout>
+		<s:ComboBox id="corpusCombo" width="96%"
+					change="handle_corpusComboChange(event)"
+					dataProvider="{corpusList}"
+					labelFunction="myLabelFunc"
+					/>
+
+		<!--	<s:Button id="addOesButton" width="37" height="22" label="+" fontSize="16"/>
+		<s:Button id="removeOesButton" width="37" height="22" label="-" fontSize="16"/>-->
+	</s:Group>
+
+	<s:Label top="10" fontSize="12" fontWeight="bold"
+			 horizontalCenter="0" includeIn="corpusLoaded" text="Document set to triage."/>
+	
+	<s:Group includeIn="corpusLoaded" width="100%" height="50%">
+		<s:layout>
+			<s:HorizontalLayout/>
+		</s:layout>
+		<s:List id="triageCorpusCombo" width="100%" height="100%"
+					change="handle_triageCorpusComboChange(event)"
+					dataProvider="{slaveList}"
+					labelFunction="myLabelFunc"
+					/>
+		<!--	<s:Button id="addOesButton" width="37" height="22" label="+" fontSize="16"/>
+		<s:Button id="removeOesButton" width="37" height="22" label="-" fontSize="16"/>-->
+	</s:Group>	
+
+	<s:Label top="10" fontSize="12" fontWeight="bold"
+			 horizontalCenter="0" includeIn="corpusLoaded" 
+			 text="Classification types to show."/>
+
+	<s:Group includeIn="corpusLoaded">
+		<s:layout>
+			<s:VerticalLayout />
+		</s:layout>
+		<s:RadioButton id="inOutButton_all" left="5" top="5" label="All"
+					   groupName="triageButtonGroup"
+					   click="handle_inOutButton_all(event)"/>
+		<s:RadioButton id="inOutButton_unclassified" left="5" top="5" label="Unclassified"
+					   groupName="triageButtonGroup"
+					   click="handle_inOutButton_unclassified(event)"/>
+		<s:RadioButton id="inOutButton_in" left="5" top="5" label="In"
+					   groupName="triageButtonGroup"
+					   click="handle_inOutButton_in(event)"/>
+		<s:RadioButton id="inOutButton_out" left="5" top="5" label="Out"
+					   groupName="triageButtonGroup"
+					   click="handle_inOutButton_out(event)"/>
+	</s:Group>	
+
+		
+</s:Group>
