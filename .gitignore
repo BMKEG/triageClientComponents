@@ -1,3 +1,6 @@
 /target
 /.settings
 /.project
+/.actionScriptProperties
+/.flexLibProperties
+/bin
