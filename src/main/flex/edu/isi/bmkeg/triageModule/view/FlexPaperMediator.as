@@ -38,8 +38,8 @@ package edu.isi.bmkeg.triageModule.view
 			addContextListener(FindTriageScoreByIdResultEvent.FIND_TRIAGESCOREBY_ID_RESULT, 
 				findTriageScoreByIdResultHandler);
 
-			addContextListener(ClearTriageCorpusEvent.CLEAR_TRIAGE_CORPUS, 
-					clearTriageCorpusHandler);
+			addContextListener(ListTriageScoreListPagedEvent.LIST_TRIAGESCORELIST_PAGED, 
+				ListTriageScoreListPagedHandler);
 			
 			addViewListener(DocumentLoadedEvent.DOCUMENT_LOADED, documentLoadedHandler);
 			
@@ -49,26 +49,6 @@ package edu.isi.bmkeg.triageModule.view
 				dispatch(new FindTriageScoreByIdEvent(triageModel.currentScore.vpdmfId));
 					
 		}
-		
-//		private function findTriageScoreByIdResultHandler(event:FindTriageScoreByIdResultEvent):void {
-//			
-//			var url:String = Utils.getAppUrl();
-//			
-//			var cit:LiteratureCitation = event.object.citation as LiteratureCitation;
-//					
-//			url = url.substr(0, url.lastIndexOf("/clientApp")) + "/rest/load?swfFile=" + cit.vpdmfId + ".swf";
-//			
-//			try {
-//
-//				this.view.loadSwf(url);
-//			
-//			} catch(e:Error){
-//			
-//				trace("Error loading SWF file: " + e);
-//			
-//			}
-//			
-//		}
 
 		private function findTriageScoreByIdResultHandler(event:FindTriageScoreByIdResultEvent):void {
 			
@@ -89,32 +69,19 @@ package edu.isi.bmkeg.triageModule.view
 			}
 			
 		}
-
 		
-		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		// Reset everything
-		//
-		public function clearTriageCorpusHandler(event:ClearTriageCorpusEvent):void {
-
-			var url:String = Utils.getAppUrl();
-			url = url.substr(0, url.lastIndexOf("/clientApp")) + "/rest/load?swfFile=blank.swf";
-
-			try {
-				
-//				this.view.loadSwf(url);
-				
-			} catch(e:Error){
-				
-				trace("Error loading SWF file: " + e);
-				
-			}
+		private function ListTriageScoreListPagedHandler(event:ListTriageScoreListPagedEvent):void {
 			
+			var url:String = "/" + Utils.getWebAppContext();
+						
+			url = url + "/rest/load?swfFile=00000.swf";
+						
+			this.view.loadSwf(url);
+						
 		}
 		
 		public function documentLoadedHandler(event:DocumentLoadedEvent):void {
 			
-			var i:int = 0;
-			 i = i+1;
 			
 			trace("Document Loaded");
 				

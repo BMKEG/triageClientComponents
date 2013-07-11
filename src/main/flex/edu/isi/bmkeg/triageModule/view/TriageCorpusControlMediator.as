@@ -44,7 +44,7 @@ package edu.isi.bmkeg.triageModule.view
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// When you select a corpus, load it. 
 			addViewListener(FindCorpusByIdEvent.FIND_CORPUS_BY_ID, 
-				dispatch);
+				dispatchFindCorpusById);
 
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// When the context loads a list of TriageCorpus, add it to the control
@@ -63,9 +63,8 @@ package edu.isi.bmkeg.triageModule.view
 			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// On loading this control, we first list all the corpora on the server
-			var c:Corpus = new Corpus();
 			dispatch(new ListCorpusEvent(new Corpus_qo()));
-			
+			dispatch(new ListTriageCorpusEvent(new TriageCorpus_qo()));
 			
 		}
 
@@ -74,27 +73,52 @@ package edu.isi.bmkeg.triageModule.view
 		}
 
 		public function listTriageCorpusResultHandler(event:ListTriageCorpusResultEvent):void {
-			view.currentState = "corpusLoaded"
 			view.slaveList = event.list;
 		}
 		
+		public function dispatchFindCorpusById(event:FindCorpusByIdEvent):void {
+			
+			triageModel.targetCorpus = new Corpus();
+			triageModel.targetCorpus.vpdmfId = event.id;
+			
+			this.dispatchListTriageScoreListPaged();
+
+			this.dispatch( event );
+			
+		}
+		
 		public function dispatchSelectTriageCorpus(event:SelectTriageCorpusEvent):void {
+			
+			triageModel.triageCorpus = new TriageCorpus();
+			triageModel.triageCorpus.vpdmfId = event.vpdmfId;
+			triageModel.currentInOutCode = event.inOutCode;
+				
+			this.dispatchListTriageScoreListPaged();
+			
+			this.dispatch(new FindTriageCorpusByIdEvent(event.vpdmfId) );
+		
+		}
+		
+		private function dispatchListTriageScoreListPaged():void {
 
 			var ts:TriageScore_qo = new TriageScore_qo();
 			var tc:TriageCorpus_qo = new TriageCorpus_qo();
-			var tt:TriageCorpus_qo = new TriageCorpus_qo();
-			
-			tc.vpdmfId = String(event.vpdmfId);
-			tt.vpdmfId = String(triageModel.targetCorpus.vpdmfId);
+			var tt:Corpus_qo = new Corpus_qo();
+
 			ts.triageCorpus = tc;
 			ts.targetCorpus = tt;
 			
-			if(event.inOutCode.length > 0) {
-				ts.inOutCode = event.inOutCode;
+			if( triageModel.triageCorpus != null 
+				&& triageModel.targetCorpus != null) {	
+			
+				tc.vpdmfId = String(triageModel.triageCorpus.vpdmfId);
+				tt.vpdmfId = String(triageModel.targetCorpus.vpdmfId);
+				ts.inOutCode = triageModel.currentInOutCode;
+				
+				this.dispatch(new ListTriageScoreListPagedEvent(ts, 0, triageModel.listPageSize));
+			
 			}
 			
-			this.dispatch(new ListTriageScoreListPagedEvent(ts, 0, triageModel.listPageSize));
-
 		}
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

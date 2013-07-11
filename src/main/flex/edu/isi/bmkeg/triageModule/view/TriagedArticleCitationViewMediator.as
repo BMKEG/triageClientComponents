@@ -39,6 +39,9 @@ package edu.isi.bmkeg.triageModule.view
 			addContextListener(FindTriageScoreByIdResultEvent.FIND_TRIAGESCOREBY_ID_RESULT, 
 				findTriagedArticleByIdResultHandler);
 
+			addContextListener(ListTriageScoreListPagedEvent.LIST_TRIAGESCORELIST_PAGED, 
+				ListTriageScoreListPagedHandler);
+			
 			loadCurrentSelection();
 		}
 		
@@ -48,6 +51,13 @@ package edu.isi.bmkeg.triageModule.view
 		
 		}
 
+		private function ListTriageScoreListPagedHandler(event:ListTriageScoreListPagedEvent):void {
+			
+			loadCurrentSelection();
+			
+		}
+
+		
 		private function loadCurrentSelection():void {
 			
 			try {

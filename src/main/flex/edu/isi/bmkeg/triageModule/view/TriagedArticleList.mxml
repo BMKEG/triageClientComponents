@@ -24,7 +24,10 @@
 			
 			[Bindable]
 			public var listLength:int;
-			
+
+			[Bindable]
+			public var typItem:Object;
+
 			private var _triageDocumentsCollection:IList;
 			
 			[Bindable]
@@ -49,7 +52,16 @@
 			}
 			
 			public function init():void {
+
+				this.typItem = {
+						"ArticleCitation_7" : "12345678",
+						"ArticleCitation" : "not too long",
+						"TriagedArticle_2" : "unclassified",
+						"TriagedArticle_3" : "0.667"
+				};
+				
 				triageDocumentListDataGrid.addEventListener(KeyboardEvent.KEY_UP, keyHandler);
+			
 			}
 				
 			private function keyHandler(event:KeyboardEvent):void {
@@ -97,6 +109,7 @@
 	<s:DataGrid id="triageDocumentListDataGrid" width="100%" height="100%" 
 				dataProvider="{asyncListView}"
 				selectionMode="multipleRows"
+  			    typicalItem="{typItem}"
 				selectionChange="selectionChangeHandler(event)"
 				sortableColumns="true">
 		<s:columns>
@@ -111,12 +124,12 @@
 							  dataTipFunction="popupFormatter"
 							  showDataTips="true"/>
 				<s:GridColumn headerText="Classification"  
-							  dataField="TriageScore_2"
+							  dataField="TriagedArticle_2"
 							  dataTipFunction="popupFormatter"
 							  showDataTips="true"
 							  width="100"/>
 				<s:GridColumn headerText="Score"  
-							  dataField="TriageScore_3"
+							  dataField="TriagedArticle_3"
 							  dataTipFunction="popupFormatter"
 							  showDataTips="true"
 							  width="100"

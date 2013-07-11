@@ -3,6 +3,9 @@ package edu.isi.bmkeg.triageModule.controller
 	import edu.isi.bmkeg.pagedList.model.*;
 	
 	import edu.isi.bmkeg.triage.rl.events.*;
+	
+	import edu.isi.bmkeg.triageModule.model.TriageModel;
+
 	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 	
 	import flash.events.Event;
@@ -19,7 +22,7 @@ package edu.isi.bmkeg.triageModule.controller
 		
 		[Inject]
 		public var listModel:PagedListModel;
-	
+		
 		override public function execute():void
 		{
 						

@@ -25,6 +25,8 @@ package edu.isi.bmkeg.triageModule.controller
 		{
 			model.queryTriagedDocument = event.object;	
 			service.listTriageScoreListPaged(event.object, event.offset, event.cnt);
+			
+			model.currentScore = null;
 		}
 		
 	}

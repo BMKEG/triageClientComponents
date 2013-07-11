@@ -30,7 +30,7 @@ package edu.isi.bmkeg.triageModule.model
 
 		public var currentScore:TriageScore;
 
-		public var currentInOutCode:int;
+		public var currentInOutCode:String;
 		
 	}
 

@@ -3,7 +3,8 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
 		 xmlns:hc="com.hillelcoren.components.*"
-		 width="100%" height="100%">
+		 width="100%" height="100%"
+		 initialize="init(event)">
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
@@ -12,8 +13,6 @@
 	</fx:Declarations>
 
 	<s:states>
-		<s:State name="empty"/>
-		<s:State name="corpusLoaded"/>
 	</s:states>
 	
 	<fx:Script>
@@ -29,6 +28,7 @@
 			import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 			
 			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
 			
@@ -47,13 +47,11 @@
 				var i:int = event.newIndex;
 				
 				if( i >= 0 ) {
+					
 					var o:Object = corpusCombo.dataProvider.getItemAt(i);
 					var lvi:LightViewInstance = LightViewInstance(o);
 					var vpdmfId:Number = lvi.vpdmfId;
 					
-					var q:TriageCorpus_qo = new TriageCorpus_qo();
-					this.dispatchEvent( new ListTriageCorpusEvent(q) );
-
 					var m:Corpus = new Corpus();
 					m.vpdmfId = vpdmfId
 					this.dispatchEvent( new FindCorpusByIdEvent(vpdmfId) );
@@ -133,11 +131,15 @@
 				return lvi.vpdmfLabel; 
 			}
 						
+			protected function init(event:FlexEvent):void {
+				inOutButton_all.selected = true;
+			}
+			
 		]]>
 	</fx:Script>
 	
 	<s:Label top="10" fontSize="12" fontWeight="bold"
-			 horizontalCenter="0" text="First, pick a corpus"/>
+			 horizontalCenter="0" text="Target Corpus"/>
 
 	<s:Group>
 		<s:layout>
@@ -154,9 +156,9 @@
 	</s:Group>
 
 	<s:Label top="10" fontSize="12" fontWeight="bold"
-			 horizontalCenter="0" includeIn="corpusLoaded" text="Document set to triage."/>
+			 horizontalCenter="0" text="Document set to be triaged"/>
 	
-	<s:Group includeIn="corpusLoaded" width="100%" height="50%">
+	<s:Group width="100%" height="50%">
 		<s:layout>
 			<s:HorizontalLayout/>
 		</s:layout>
@@ -170,10 +172,10 @@
 	</s:Group>	
 
 	<s:Label top="10" fontSize="12" fontWeight="bold"
-			 horizontalCenter="0" includeIn="corpusLoaded" 
+			 horizontalCenter="0" 
 			 text="Classification types to show."/>
 
-	<s:Group includeIn="corpusLoaded">
+	<s:Group>
 		<s:layout>
 			<s:VerticalLayout />
 		</s:layout>
