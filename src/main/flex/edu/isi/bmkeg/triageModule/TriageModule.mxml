@@ -90,7 +90,19 @@
 			<s:layout>
 				<s:BasicLayout/>
 			</s:layout>
-			<view:TriagedArticleList left="5" right="0" top="10" bottom="10" />
+			<mx:TabNavigator left="5" 
+							  right="5" 
+							  top="10" 
+							  bottom="10" >
+				<s:NavigatorContent  label="Target Corpus" >
+					<view:TargetArticleList id="targetCorpusList" 
+											width="100%" height="100%" />
+				</s:NavigatorContent>
+				<s:NavigatorContent label="Triage Corpus" >
+					<view:TriagedArticleList id="triageCorpusList" 
+											 width="100%" height="100%" />
+				</s:NavigatorContent>
+			</mx:TabNavigator>
 		</s:Group>
 		<mx:TabNavigator width="50%" height="100%" >
 			<s:NavigatorContent label="Citation" >

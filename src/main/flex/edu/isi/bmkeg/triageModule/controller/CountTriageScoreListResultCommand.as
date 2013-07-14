@@ -10,14 +10,14 @@ package edu.isi.bmkeg.triageModule.controller
 	
 	import flash.events.Event;
 	
-	public class CountTriagedDocumentListResultCommand extends Command
+	public class CountTriageScoreListResultCommand extends Command
 	{
 	
 		[Inject]
 		public var event:CountTriageScoreListResultEvent;
 
 		[Inject]
-		public var model:PagedListModel;
+		public var model:TriageCorpusPagedListModel;
 				
 		override public function execute():void
 		{

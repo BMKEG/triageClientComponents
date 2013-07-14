@@ -3,19 +3,25 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
 		 initialize="init()"
-		 width="1000" height="300">
+		 width="100" height="300">
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
 	<fx:Declarations>
-		<s:AsyncListView id="asyncListView" list="{triageDocumentsList}" createPendingItemFunction="createPendingItem"/>
+		<s:AsyncListView id="asyncListView" list="{documentsList}" createPendingItemFunction="createPendingItem"/>
 	</fx:Declarations>
+	
+	<s:states>
+		<s:State name="default"/>	
+		<s:State name="noScores"/>	
+	</s:states>
 	
 	<fx:Script>
 		<![CDATA[
 			
 			import edu.isi.bmkeg.triageModule.events.*;
-			import edu.isi.bmkeg.triage.rl.events.*;
+			import edu.isi.bmkeg.ftd.rl.events.FindArticleDocumentByIdEvent;
+			import edu.isi.bmkeg.digitalLibrary.rl.events.FindArticleCitationDocumentByIdEvent;
 			
 			import edu.isi.bmkeg.pagedList.PagedList;
 			
@@ -33,61 +39,41 @@
 			[Bindable]
 			public var typItem:Object;
 
-			private var _triageDocumentsCollection:IList;
+			private var _documentsCollection:IList;
 			
 			[Bindable]
-			public function get triageDocumentsList():IList
+			public function get documentsList():IList
 			{
-				return _triageDocumentsCollection;
+				return _documentsCollection;
 			}
 			
-			public function set triageDocumentsList(v:IList):void
+			public function set documentsList(v:IList):void
 			{
-				_triageDocumentsCollection = v;
+				_documentsCollection = v;
 			}
 			
 			public function get selectedIndex():int
 			{
-				return triageDocumentListDataGrid.selectedIndex;
+				return targetDocumentListDataGrid.selectedIndex;
 			}
 			
 			public function set selectedIndex(v:int):void 
 			{
-				triageDocumentListDataGrid.setSelectedIndex(v);
+				targetDocumentListDataGrid.setSelectedIndex(v);
 			}
 			
 			public function init():void {
 
 				this.typItem = {
 						"ArticleCitation_7" : "12345678",
-						"ArticleCitation" : "not too long",
-						"TriagedArticle_2" : "unclassified",
-						"TriagedArticle_3" : "0.667"
+						"ArticleCitation" : "not too long"
 				};
-				
-				triageDocumentListDataGrid.addEventListener(KeyboardEvent.KEY_UP, keyHandler);
-			
+							
 			}
-				
-			private function keyHandler(event:KeyboardEvent):void {
-				
-				// left cursor towards 'in'
-				if( event.keyCode == 37 || event.keyCode == 187 ) {
-					dispatchEvent( new SwitchInOutEvent(SwitchInOutEvent.IN) );
-				} 
-				// right cursor towards 'out'
-				else if(event.keyCode == 39 || event.keyCode == 189) {
-					dispatchEvent( new SwitchInOutEvent(SwitchInOutEvent.OUT) );					
-				}
-				// delete key towards 'unclassified'
-				else if(event.keyCode == 8 || event.keyCode == 46) {
-					dispatchEvent( new SwitchInOutEvent(SwitchInOutEvent.UNCLASSIFIED) );					
-				}
-			}
-			
+							
 			public function clearSelection():void {
 				
-				triageDocumentListDataGrid.clearSelection();
+				targetDocumentListDataGrid.clearSelection();
 			
 			}
 			
@@ -99,8 +85,8 @@
 			
 			private function selectionChangeHandler(event:GridSelectionEvent):void {
 			
-				var o:Object = triageDocumentListDataGrid.selectedItem;	
-				dispatchEvent(new FindTriageScoreByIdEvent(o.vpdmfId));
+				var o:Object = targetDocumentListDataGrid.selectedItem;	
+				dispatchEvent(new FindArticleCitationDocumentByIdEvent(o.vpdmfId));
 			
 			}
 			
@@ -111,7 +97,7 @@
 			}
 		]]>
 	</fx:Script>
-	<s:DataGrid id="triageDocumentListDataGrid" width="100%" height="100%" 
+	<s:DataGrid id="targetDocumentListDataGrid" width="100%" height="100%" 
 				dataProvider="{asyncListView}"
 				selectionMode="multipleRows"
   			    typicalItem="{typItem}"
@@ -128,20 +114,9 @@
 							  dataField="ArticleCitation"
 							  dataTipFunction="popupFormatter"
 							  showDataTips="true"/>
-				<s:GridColumn headerText="Classification"  
-							  dataField="TriagedArticle_2"
-							  dataTipFunction="popupFormatter"
-							  showDataTips="true"
-							  width="100"/>
-				<s:GridColumn headerText="Score"  
-							  dataField="TriagedArticle_3"
-							  dataTipFunction="popupFormatter"
-							  showDataTips="true"
-							  width="100"
-						   sortable="true"/>
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>
 	<s:Label top="10" fontSize="12" horizontalCenter="0"  
-			 text="{listLength} Articles in Triage Corpus."/>
+			 text="{listLength} Articles in Target Corpus."/>
 </s:Group>

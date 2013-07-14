@@ -21,7 +21,7 @@ package edu.isi.bmkeg.triageModule.view
 		public var view:TriagedArticleList;
 		
 		[Inject]
-		public var listModel:PagedListModel;
+		public var listModel:TriageCorpusPagedListModel;
 
 		[Inject]
 		public var model:TriageModel;
@@ -29,11 +29,8 @@ package edu.isi.bmkeg.triageModule.view
 		override public function onRegister():void
 		{
 			
-			addContextListener(PagedListUpdatedEvent.UPDATED, 
+			addContextListener(PagedListUpdatedEvent.UPDATED + TriageCorpusPagedListModel.LIST_ID, 
 				triageDocumentsListUpdatedHandler);
-
-			addContextListener(FindTriageScoreByIdResultEvent.FIND_TRIAGESCOREBY_ID_RESULT, 
-				triagedArticleResultHandler);
 			
 			addContextListener(ClearTriageCorpusEvent.CLEAR_TRIAGE_CORPUS, 
 				clearTriageCorpusHandler);
@@ -45,47 +42,30 @@ package edu.isi.bmkeg.triageModule.view
 				switchInOutCodes);
 			
 			listModel.pageSize = model.listPageSize;
-		
+			
+			// If we already have a triageCorpus specified, then run this. 
+			if( model.triageCorpus != null ) {
+				
+				view.triageDocumentsList = listModel.pagedList;
+				view.listLength = listModel.pagedListLength;
+				
+			}
 		}
 		
 		private function triageDocumentsListUpdatedHandler(event:PagedListUpdatedEvent):void
 		{
+			if( event.listId != view.id )
+				return;
 			
 			view.triageDocumentsList = listModel.pagedList;
 			view.listLength = listModel.pagedListLength;
 			
 		}
-		
-		private function triagedArticleResultHandler(event:FindTriageScoreByIdResultEvent):void
-		{
-			/*var td:TriagedDocument = TriagedDocument(event.object);
-						
-			for each(var lvi:LightViewInstance in event.list) {
-				
-				var o:Object = new Object();
-				o.vpdmfLabel = lvi.vpdmfLabel;
-				o.vpdmfId = lvi.vpdmfId;
-				var fields:Array = lvi.indexTupleFields.split(/\<\|\>/);
-				var tuple:Array = lvi.indexTuple.split(/\<\|\>/);
-				
-				for(var i:int=0; i<fields.length; i++) {
-					var f:String = fields[i] as String;
-					var v:String = tuple[i] as String;					
-					v = v.replace(/,/,", ");
-					o[f]=v;	
-				}
-				
-				objects.addItem(o);
-				
-			}
-			
-			view.triageDocumentsList = objects;*/
-			
-		}
+	
 		
 		private function switchInOutCodes(event:SwitchInOutEvent):void {
-			
-			var td:TriageScore = model.currentScore;
+
+			var td:TriageScore = TriageScore(model.currentCitation.triageScores.getItemAt(0));
 			td.inOutCode = event.code;
 			
 			dispatch( new UpdateTriagedArticleEvent(td) ); 

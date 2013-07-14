@@ -2,7 +2,7 @@ package edu.isi.bmkeg.triageModule.controller
 {	
 	import edu.isi.bmkeg.pagedList.events.*;
 	import edu.isi.bmkeg.triage.model.*;
-	import edu.isi.bmkeg.triage.rl.events.*;
+	import edu.isi.bmkeg.digitalLibrary.rl.events.ListTargetArticleListPagedEvent;
 	import edu.isi.bmkeg.triageModule.model.*;
 	
 	import flash.events.Event;
@@ -11,7 +11,7 @@ package edu.isi.bmkeg.triageModule.controller
 	
 	import org.robotlegs.mvcs.Command;
 	
-	public class PagedListRetrievePageCommand extends Command
+	public class TargetCorpusPagedListRetrievePageCommand extends Command
 	{
 	
 		[Inject]
@@ -22,12 +22,10 @@ package edu.isi.bmkeg.triageModule.controller
 				
 		override public function execute():void
 		{
-			
-			this.dispatch(
-				new ListTriageScoreListPagedEvent(
-					model.queryTriagedDocument, event.offset, event.count
-				)
-			);
+			if( model.queryLiteratureCitation != null ) {
+				this.dispatch( new ListTargetArticleListPagedEvent(
+						model.queryLiteratureCitation, event.offset, event.count));
+			}
 			
 		}
 		

@@ -1,8 +1,10 @@
 package edu.isi.bmkeg.triageModule.controller
 {	
-	import edu.isi.bmkeg.digitalLibrary.model.citations.Corpus;
+	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
+	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.*;
 	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.triage.model.TriageCorpus;
+	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
 	import edu.isi.bmkeg.triage.rl.events.*;
 	import edu.isi.bmkeg.triageModule.model.TriageModel;
 	
@@ -22,13 +24,7 @@ package edu.isi.bmkeg.triageModule.controller
 		
 		override public function execute():void
 		{	
-			model.targetCorpus = event.object;	
-			if( model.triageCorpus != null ) {
-				
-				var i:int=0;
-				
-			}
-				
+			model.targetCorpus = event.object;				
 		}
 		
 	}

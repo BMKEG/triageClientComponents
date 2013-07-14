@@ -2,6 +2,7 @@ package edu.isi.bmkeg.triageModule.view
 {
 
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
+	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.pagedList.*;
 	import edu.isi.bmkeg.pagedList.model.*;
 	import edu.isi.bmkeg.triage.events.*;
@@ -31,16 +32,16 @@ package edu.isi.bmkeg.triageModule.view
 		[Inject]
 		public var triageModel:TriageModel;
 
-		[Inject]
-		public var listModel:PagedListModel;
-		
 		override public function onRegister():void {
 			
 			addContextListener(FindTriageScoreByIdResultEvent.FIND_TRIAGESCOREBY_ID_RESULT, 
 				findTriagedArticleByIdResultHandler);
 
+			addContextListener(FindArticleCitationDocumentByIdResultEvent.FIND_ARTICLECITATIONDOCUMENTBY_ID_RESULT, 
+				findArticleCitationDocumentByIdResultHandler);
+
 			addContextListener(ListTriageScoreListPagedEvent.LIST_TRIAGESCORELIST_PAGED, 
-				ListTriageScoreListPagedHandler);
+				listTriageScoreListPagedHandler);
 			
 			loadCurrentSelection();
 		}
@@ -51,27 +52,30 @@ package edu.isi.bmkeg.triageModule.view
 		
 		}
 
-		private function ListTriageScoreListPagedHandler(event:ListTriageScoreListPagedEvent):void {
+		private function listTriageScoreListPagedHandler(event:ListTriageScoreListPagedEvent):void {
 			
 			loadCurrentSelection();
 			
 		}
 
+		private function findArticleCitationDocumentByIdResultHandler(event:FindArticleCitationDocumentByIdResultEvent):void {
+			
+			loadCurrentSelection();
+			
+		}
 		
 		private function loadCurrentSelection():void {
 			
 			try {
 				
-				var td:TriageScore = triageModel.currentScore;
+				var a:LiteratureCitation = triageModel.currentCitation;
 				
-				if (td == null) {
+				if (a == null) {
 
 					view.clearFormFields();
 
 				} else {
-					
-					var a:LiteratureCitation = td.citation;
-					
+										
 					if (view.loadedArticle !== a) {
 						view.loadLiteratureCitation(a);											
 					}
@@ -79,7 +83,7 @@ package edu.isi.bmkeg.triageModule.view
 			
 			} catch (e:ItemPendingError) {
 
-				e.addResponder(new ItemResponder(itemPendingResult,null,listModel.selectedIndex));
+				e.addResponder(new ItemResponder(itemPendingResult, null));
 			
 			}			
 		

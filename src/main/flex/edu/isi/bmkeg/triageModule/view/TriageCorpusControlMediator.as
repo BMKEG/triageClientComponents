@@ -1,7 +1,7 @@
 package edu.isi.bmkeg.triageModule.view
 {
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
-	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.Corpus_qo;
+	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.*;
 	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.triage.events.*;
 	import edu.isi.bmkeg.triage.model.*;
@@ -23,36 +23,25 @@ package edu.isi.bmkeg.triageModule.view
 		
 		override public function onRegister():void
 		{
-			
-//			addViewListener(UserRequestCitationsListFilterChangeToCorpusEvent.CHANGE,dispatch);
-						
+									
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// list the corpora. 
 			addViewListener(ListCorpusEvent.LIST_CORPUS, 
 				dispatch);
-			
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// When the context loads a corpus, add it to the control
 			addContextListener(ListCorpusResultEvent.LIST_CORPUS_RESULT, 
 				listCorpusResultHandler);
 			
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// When you select a corpus, list the triage corpora. 
-			addViewListener(ListTriageCorpusEvent.LIST_TRIAGECORPUS, 
-				dispatch);
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// When you select a corpus, load it. 
 			addViewListener(FindCorpusByIdEvent.FIND_CORPUS_BY_ID, 
 				dispatchFindCorpusById);
-
+			addContextListener(FindCorpusByIdResultEvent.FIND_CORPUSBY_ID_RESULT, 
+				handleLoadedTargetCorpus);
+			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// When the context loads a list of TriageCorpus, add it to the control
+			// List the triage corpora. 
+			addViewListener(ListTriageCorpusEvent.LIST_TRIAGECORPUS, 
+				dispatch);
 			addContextListener(ListTriageCorpusResultEvent.LIST_TRIAGECORPUS_RESULT, 
 				listTriageCorpusResultHandler);
-
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// When you select a TriageCorpus, list it's documents. 
 			addViewListener(SelectTriageCorpusEvent.SELECT_TRIAGE_CORPUS, 
 				dispatchSelectTriageCorpus);
 			
@@ -104,7 +93,7 @@ package edu.isi.bmkeg.triageModule.view
 			var ts:TriageScore_qo = new TriageScore_qo();
 			var tc:TriageCorpus_qo = new TriageCorpus_qo();
 			var tt:Corpus_qo = new Corpus_qo();
-
+			
 			ts.triageCorpus = tc;
 			ts.targetCorpus = tt;
 			
@@ -121,6 +110,24 @@ package edu.isi.bmkeg.triageModule.view
 			
 		}
 		
+		private function handleLoadedTargetCorpus(event:FindCorpusByIdResultEvent):void {
+
+			this.view.triageCorpusCombo.enabled = true;
+
+			var acQ:ArticleCitation_qo = new ArticleCitation_qo();
+			var tsQ:TriageScore_qo = new TriageScore_qo();
+			var corpQ:Corpus_qo = new Corpus_qo();
+			acQ.triageScores.addItem(tsQ);
+			tsQ.targetCorpus = corpQ;
+			
+			tsQ.inOutCode = "in";
+			corpQ.name = triageModel.targetCorpus.name;
+			corpQ.vpdmfId = triageModel.targetCorpus.vpdmfId + "";
+			
+			this.dispatch( new ListTargetArticleListPagedEvent(acQ, 0, 300) );
+
+		}
+		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Reset everything
 		//
@@ -131,6 +138,7 @@ package edu.isi.bmkeg.triageModule.view
 			dispatch(new ListCorpusEvent(new Corpus_qo()));
 			
 		}
+
 		
 	}
 	

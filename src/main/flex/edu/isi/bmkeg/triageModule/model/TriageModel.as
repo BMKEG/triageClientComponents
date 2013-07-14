@@ -2,6 +2,8 @@ package edu.isi.bmkeg.triageModule.model
 {
 	
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
+	import edu.isi.bmkeg.ftd.model.FTD;
+	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.*;
 	import edu.isi.bmkeg.triage.model.*;
 	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
 	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
@@ -28,7 +30,9 @@ package edu.isi.bmkeg.triageModule.model
 				
 		public var queryTriagedDocument:TriageScore_qo;
 
-		public var currentScore:TriageScore;
+		public var queryLiteratureCitation:LiteratureCitation_qo;
+
+		public var currentCitation:LiteratureCitation;
 
 		public var currentInOutCode:String;
 		

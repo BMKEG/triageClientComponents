@@ -2,7 +2,7 @@ package edu.isi.bmkeg.triageModule.controller
 {	
 	import edu.isi.bmkeg.pagedList.model.*;
 	
-	import edu.isi.bmkeg.triage.rl.events.*;
+	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	
 	import edu.isi.bmkeg.triageModule.model.TriageModel;
 	import edu.isi.bmkeg.triageModule.model.TriageCorpusPagedListModel;
@@ -16,14 +16,14 @@ package edu.isi.bmkeg.triageModule.controller
 	
 	import org.robotlegs.mvcs.Command;
 	
-	public class ListTriageScoreListPagedResultCommand extends Command
+	public class ListTargetArticleListPagedResultCommand extends Command
 	{
 		
 		[Inject]
-		public var event:ListTriageScoreListPagedResultEvent;
+		public var event:ListTargetArticleListPagedResultEvent;
 		
 		[Inject]
-		public var listModel:TriageCorpusPagedListModel;
+		public var listModel:TargetCorpusPagedListModel;
 
 		override public function execute():void
 		{

@@ -7,6 +7,7 @@ package edu.isi.bmkeg.triageModule.view
 	
 	
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
+	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.ftd.model.*;
 	import edu.isi.bmkeg.ftd.rl.events.*;
 	import edu.isi.bmkeg.triage.events.*;
@@ -41,22 +42,36 @@ package edu.isi.bmkeg.triageModule.view
 			addContextListener(ListTriageScoreListPagedEvent.LIST_TRIAGESCORELIST_PAGED, 
 				ListTriageScoreListPagedHandler);
 			
+			addContextListener(FindArticleCitationDocumentByIdResultEvent.FIND_ARTICLECITATIONDOCUMENTBY_ID_RESULT, 
+				findArticleCitationDocumentByIdResultHandler);
+						
 			addViewListener(DocumentLoadedEvent.DOCUMENT_LOADED, documentLoadedHandler);
 			
 			addViewListener(ErrorEvent.ERROR, errorHandler);
 			
-			if( triageModel.currentScore != null )
-				dispatch(new FindTriageScoreByIdEvent(triageModel.currentScore.vpdmfId));
+			if( triageModel.currentCitation != null ) {
+				loadPdf(triageModel.currentCitation.vpdmfId);
+			}
 					
 		}
 
+		private function findArticleCitationDocumentByIdResultHandler(event:FindArticleCitationDocumentByIdResultEvent):void {
+			
+			loadPdf(event.object.vpdmfId);
+			
+		}
+		
 		private function findTriageScoreByIdResultHandler(event:FindTriageScoreByIdResultEvent):void {
 			
+			loadPdf(event.object.citation.vpdmfId);
+			
+		}
+		
+		private function loadPdf(vpdmfId:Number):void {
+			
 			var url:String = "/" + Utils.getWebAppContext();
-			
-			var cit:LiteratureCitation = event.object.citation as LiteratureCitation;
-			
-			url = url + "/rest/load?swfFile=" + cit.vpdmfId + ".swf";
+						
+			url = url + "/rest/load?swfFile=" + vpdmfId + ".swf";
 			
 			try {
 				

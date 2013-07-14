@@ -25,7 +25,7 @@ package edu.isi.bmkeg.triageModule.controller
 		override public function execute():void
 		{
 			
-			model.currentScore = event.object;
+			model.currentCitation = event.object.citation;
 			
 		}
 		

@@ -20,7 +20,7 @@ package edu.isi.bmkeg.triageModule.controller
 		public var event:ListTriagedArticleResultEvent;
 		
 		[Inject]
-		public var listModel:PagedListModel;
+		public var listModel:TriageCorpusPagedListModel;
 		
 		override public function execute():void
 		{
