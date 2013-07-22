@@ -5,7 +5,7 @@ package edu.isi.bmkeg.triageModule.model
 	public class TargetCorpusPagedListModel extends PagedListModel
 	{
 		
-		public static var LIST_ID = "targetCorpusList"
+		public static var LIST_ID:String = "targetCorpusList"
 
 		public function TargetCorpusPagedListModel()
 		{
