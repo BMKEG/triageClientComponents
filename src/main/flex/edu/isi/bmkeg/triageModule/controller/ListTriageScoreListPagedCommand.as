@@ -2,6 +2,7 @@ package edu.isi.bmkeg.triageModule.controller
 {	
 	import org.robotlegs.mvcs.Command;
 	
+	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
 	import edu.isi.bmkeg.triage.rl.services.ITriageService;
 	import edu.isi.bmkeg.triage.rl.events.*;
 
@@ -23,6 +24,9 @@ package edu.isi.bmkeg.triageModule.controller
 				
 		override public function execute():void
 		{
+			var ts:TriageScore_qo = event.object
+			ts.inScore = "<vpdmf-rev-sort-0>"
+			
 			model.queryTriagedDocument = event.object;	
 
 			service.listTriageScoreListPaged(event.object, event.offset, event.cnt);
