@@ -125,7 +125,8 @@
 				if( lvi == null )
 					return "-";
 				
-				return lvi.vpdmfLabel; 
+				return lvi.vpdmfLabel;
+				
 			}
 						
 			protected function init(event:FlexEvent):void {
