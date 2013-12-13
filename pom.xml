@@ -6,13 +6,13 @@
   	<parent>
 	    <groupId>edu.isi.bmkeg</groupId>
 	    <artifactId>bmkeg-as-parent</artifactId>
-	    <version>1.1.3-SNAPSHOT</version>
+	    <version>1.1.5-SNAPSHOT</version>
 	    <relativePath>../bmkeg-as-parent</relativePath>
  	</parent>
 
 	<groupId>edu.isi.bmkeg</groupId>
 	<artifactId>triageClientComponents</artifactId>
-	<version>1.1.3-SNAPSHOT</version>
+	<version>1.1.5-SNAPSHOT</version>
 	<name>triageClientComponents</name>
 	<packaging>swc</packaging>
 	
