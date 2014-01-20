@@ -2,8 +2,6 @@ package edu.isi.bmkeg.triageModule.controller
 {	
 	import org.robotlegs.mvcs.Command;
 
-	import edu.isi.bmkeg.pagedList.model.*;
-
 	import edu.isi.bmkeg.triage.rl.services.ITriageService;
 	import edu.isi.bmkeg.triageModule.model.*;
 	import edu.isi.bmkeg.triage.rl.events.*;
@@ -17,11 +15,17 @@ package edu.isi.bmkeg.triageModule.controller
 		public var event:CountTriageScoreListResultEvent;
 
 		[Inject]
-		public var model:TriageCorpusPagedListModel;
+		public var listModel:TriageCorpusPagedListModel;
 				
-		override public function execute():void
-		{
-			model.pagedListLength = event.count;
+		[Inject]
+		public var triageModel:TriageModel;
+
+		override public function execute():void {
+
+			if( triageModel.corpora.length > 0 ) {
+				listModel.pagedListLength = event.count / 
+						triageModel.corpora.length;
+			}		
 		}
 		
 	}

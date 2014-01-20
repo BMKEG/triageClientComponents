@@ -12,11 +12,11 @@ package edu.isi.bmkeg.triageModule.controller
 	
 	import org.robotlegs.mvcs.Command;
 	
-	public class FindCorpusByIdResultCommand extends Command
+	public class FindTriageCorpusByIdResultCommand extends Command
 	{
 		
 		[Inject]
-		public var event:FindCorpusByIdResultEvent;
+		public var event:FindTriageCorpusByIdResultEvent;
 		
 		[Inject]
 		public var model:TriageModel;
@@ -24,7 +24,7 @@ package edu.isi.bmkeg.triageModule.controller
 		
 		override public function execute():void
 		{	
-			model.targetCorpus = event.object;				
+			model.triageCorpus = event.object;				
 		}
 		
 	}

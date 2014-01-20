@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:GridItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="100%" height="100%">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:layout>
+		<s:HorizontalLayout paddingLeft="2" paddingRight="2" 
+							paddingTop="2" paddingBottom="2"/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.devaldi.controls.flexpaper.About;
+			
+			import edu.isi.bmkeg.triageModule.events.*;
+			
+			import flash.display.Sprite;
+			
+			import mx.core.UIComponent;
+			import mx.graphics.*;
+			
+			import spark.events.DropDownEvent;
+			import spark.primitives.*;
+			
+			private var uiC:UIComponent;
+			
+			override public function set data(value:Object):void { 
+				
+				super.data = value; 
+				
+				var cName:String = this.column.headerText;
+				var score:Number = data[cName + ".score"];
+				
+				try { 
+					if( uiC != null )
+						removeElement(uiC);
+				} catch (oops:ArgumentError) { 
+					trace("Can't drop update box: "+oops); 
+				} 
+				
+				if( score > 0 ) {
+					
+					uiC = new UIComponent();
+					uiC.width = inOutControl.height/2.0;
+					uiC.height = inOutControl.height;
+					
+					uiC.toolTip = score + "";
+					
+					var g:Sprite = new Sprite();
+					g.graphics.moveTo(0,0);
+					g.graphics.beginFill(0xffffff);
+					g.graphics.lineStyle(1, 0x000000);
+					g.graphics.drawRect(0,0,(inOutControl.height/2.0)+2,(inOutControl.height)+2);
+					g.graphics.endFill();
+					g.graphics.beginFill(0x058C24);
+					g.graphics.lineStyle(1, 0x000000, 0.0);
+					g.graphics.drawRect(1,1+(inOutControl.height)*(1.0-score),
+						(inOutControl.height/2.0)+1,(inOutControl.height)*(score));
+					g.graphics.endFill();
+					uiC.addChild(g);
+					addElementAt(uiC,0);
+				}
+				
+			} 
+			
+			protected function dropdownlist1_closeHandler(event:DropDownEvent):void {
+				
+				var list:DropDownList = DropDownList(event.currentTarget);
+				var val:String = list.selectedItem;
+				
+				if( val == SwitchInOutEvent.IN ) {
+					
+					dispatchEvent( new SwitchInOutEvent(
+						SwitchInOutEvent.IN, true, false) );					
+					
+				} else if( val == SwitchInOutEvent.OUT ) {
+					
+					dispatchEvent( new SwitchInOutEvent(
+						SwitchInOutEvent.OUT, true, false) );					
+					
+				} else if( val == SwitchInOutEvent.UNCLASSIFIED ) {
+					
+					dispatchEvent( new SwitchInOutEvent(
+						SwitchInOutEvent.UNCLASSIFIED, true, false) );					
+					
+				} 
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:DropDownList id="inOutControl"
+					chromeColor="white"
+					width="100%" height="100%" 
+					selectedItem="{data[column.dataField]}" 
+					close="dropdownlist1_closeHandler(event)" >
+		<mx:ArrayCollection>
+			<fx:String>in</fx:String>
+			<fx:String>out</fx:String>
+			<fx:String>unclassified</fx:String>
+		</mx:ArrayCollection>
+	</s:DropDownList>
+	
+</s:GridItemRenderer>

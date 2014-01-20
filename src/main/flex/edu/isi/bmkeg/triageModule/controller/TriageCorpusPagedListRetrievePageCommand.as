@@ -22,9 +22,21 @@ package edu.isi.bmkeg.triageModule.controller
 				
 		override public function execute():void
 		{
+
 			if( model.queryTriagedDocument != null ) {
+			
+				// note that we have to multiply all values pertaining 
+				// to the paged list in the flex control by the number of 
+				// corpora being processed.
+				var offset:int = event.offset;
+				var count:int = event.count;
+				var nCorpora:int = model.corpora.length;
+				
 				this.dispatch(new ListTriageScoreListPagedEvent(
-						model.queryTriagedDocument, event.offset, event.count));
+						model.queryTriagedDocument, 
+						event.offset * nCorpora, 
+						event.count * nCorpora));
+			
 			}
 			
 		}

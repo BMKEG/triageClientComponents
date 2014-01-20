@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:view="edu.isi.bmkeg.digitalLibraryModule.view.*"
+		 xmlns:hc="com.hillelcoren.components.*"
+		 xmlns:classes="com.hillelcoren.components.autoComplete.classes.*"
+		 width="100%"
+		 height="100%"
+		 resize="group1_resizeHandler(event)">	
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<s:states>
+		<s:State name="showPages"/>	
+		<s:State name="showFeatures"/>	
+	</s:states>
+
+	<fx:Declarations>
+		<s:RadioButtonGroup id="documentView" 
+							itemClick="buttonsChangeHandler(event);" 
+							selectedValue="Page Images"/>
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import edu.isi.bmkeg.digitalLibrary.events.*;
+			import edu.isi.bmkeg.digitalLibraryModule.events.*;
+			import edu.isi.bmkeg.ftd.model.*;
+			import edu.isi.bmkeg.triage.model.*;
+			import edu.isi.bmkeg.triageModule.events.*;
+			
+			import mx.collections.*;
+			import mx.core.DragSource;
+			import mx.events.DragEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ItemClickEvent;
+			import mx.events.ResizeEvent;
+			import mx.managers.DragManager;
+
+			[Bindable]
+			public var csv:String;
+			
+			[Bindable]
+			public var lapdfText:String;
+			
+			[Bindable]
+			public var bitmaps:ArrayCollection = new ArrayCollection;
+			
+			[Bindable]
+			public var features:ArrayCollection;
+			
+			[Bindable] 
+			public var frgType:String;
+
+			[Bindable] 
+			public var ruleSet:FTDRuleSet;
+			
+			public var colorLookup:Object = new Object;
+			
+			private static var swfClass:Class;
+			
+			protected function buttonsChangeHandler(event:ItemClickEvent):void {
+				var v:String = String(documentView.selectedValue);
+				this.dispatchEvent( 
+					new ChangeExplanationFeatureDisplayEvent(v)
+				);
+				
+				if( v == "Features" ) {
+					currentState = "showFeatures";					
+				} else {
+					currentState = "showPages";
+				}
+				
+			}
+							
+			public function fNameLabelFunction(item:Object, column:GridColumn):String {
+				var feat:TriageFeature = TriageFeature(item);
+				
+				return feat.featName;
+			}
+
+			public function fValueLabelFunction(item:Object, column:GridColumn):String {
+				var feat:TriageFeature = TriageFeature(item);
+				
+				return feat.featValue;
+			}
+			
+			public var resizeToggle:Boolean = true;
+			protected function group1_resizeHandler(event:ResizeEvent):void
+			{
+				if(this.initialized) {
+					if(resizeToggle) { 
+						resizeToggle = false;
+						this.dispatchEvent(event);
+					} else {
+						trace("ARGH");
+					}
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<!--<s:HGroup width="100%">
+		<s:RadioButton label="Features" 
+					   id="featureButton" 
+					   group="{documentView}"/>	
+		<s:RadioButton label="Pages" 
+					   id="pgImgButton" 
+					   group="{documentView}"/>
+	</s:HGroup>-->
+	
+	<s:List includeIn="showPages" id="pgList"			
+			width="100%"
+			height="100%"
+			itemRenderer="edu.isi.bmkeg.triageModule.view.ExplanationFeatureDisplayRenderer"
+			dataProvider="{bitmaps}">
+		<s:layout>
+			<s:VerticalLayout gap="0" 
+							  horizontalAlign="left" 
+							  verticalAlign="top"/>
+		</s:layout>
+	</s:List>	
+	
+	<s:DataGrid id="dg" width="100%" height="100%" 
+				includeIn="showFeatures"
+				dataProvider="{features}"
+				sortableColumns="false">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn headerText="Feature Name"  
+							  labelFunction="fNameLabelFunction"/>
+				<s:GridColumn headerText="Feature Value"  
+							  labelFunction="fValueLabelFunction"/>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+		
+</s:Group>
+

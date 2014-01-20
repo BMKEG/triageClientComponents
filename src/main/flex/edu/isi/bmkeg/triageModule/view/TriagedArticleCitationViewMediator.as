@@ -109,17 +109,6 @@ package edu.isi.bmkeg.triageModule.view
 			
 		}
 
-		//
-		// This function is called directly from within from within
-		//
-		private function requestFetchObjects(list:PagedList, index:int, count:int):void 
-		{
-			var td:TriageScore_qo = triageModel.queryTriagedDocument;
-						
-			dispatch(new ListTriageScoreListPagedEvent(td, index, list.pageSize));
-			
-		}
-		
 	}
 
 }

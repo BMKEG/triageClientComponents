@@ -24,8 +24,6 @@ package edu.isi.bmkeg.triageModule.controller
 				
 		override public function execute():void
 		{
-			var ts:TriageScore_qo = event.object
-			ts.inScore = "<vpdmf-rev-sort-0>"
 			
 			model.queryTriagedDocument = event.object;	
 

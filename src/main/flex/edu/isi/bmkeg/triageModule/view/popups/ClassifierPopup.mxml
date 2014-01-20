@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!-- containers\spark\myComponents\MyLoginForm.mxml -->
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:udb="edu.isi.bmkeg.utils.updownload.*"
+			   xmlns:updir="edu.isi.bmkeg.utils.uploadDirectoryControl.*"
+	 		   initialize="titlewindow1_initializeHandler(event)" 
+			   close="handleCloseEvent();">
+	<s:layout>
+		<s:VerticalLayout paddingBottom="5" 
+						  paddingTop="5"
+						  paddingLeft="5"
+						  paddingRight="5"/>
+	</s:layout>
+		
+	<fx:Declarations>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import edu.isi.bmkeg.digitalLibrary.events.ClosePopupEvent;
+			import edu.isi.bmkeg.digitalLibrary.model.citations.Corpus;
+			import edu.isi.bmkeg.digitalLibrary.rl.events.*;
+			import edu.isi.bmkeg.triage.model.*;
+			import edu.isi.bmkeg.utils.ServiceUtils;
+			import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.messaging.ChannelSet;
+			import mx.messaging.Consumer;
+			import mx.messaging.channels.AMFChannel;
+			import mx.messaging.events.MessageEvent;
+			import mx.messaging.events.MessageFaultEvent;
+			import mx.messaging.messages.AsyncMessage;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			public var message:String = "";
+			
+			[Bindable]
+			public var max:int = -1;
+			
+			[Bindable]
+			public var count:int = 0;
+			
+			public var consumer:Consumer;
+			
+			// Handle the close button and Cancel button.
+			public function handleCloseEvent():void {
+			
+				this.dispatchEvent(new ClosePopupEvent(this));
+			
+			} 
+			
+			// Handle the received message.
+			public function messageHandler(event:MessageEvent):void {
+
+				var msg:String = String(event.message.body);
+				
+				var pattern:RegExp = /(\d+) of (\d+) entities/;	
+
+				var str1:String = msg.replace(pattern, reg1);
+				function reg1():String {
+					return arguments[1];
+				}
+				
+				var str2:String = msg.replace(pattern, reg2);
+				function reg2():String {
+					return arguments[2];
+				}
+				
+				var count:Number = new Number(str1);
+				var max:Number = new Number(str2);
+				
+				this.progressBar.setProgress(count, max);
+			
+			}
+			
+			// Handle a message fault.
+			public function faultHandler(event:MessageFaultEvent):void {
+			
+				message = "Received fault: " + event.faultString + "\n";
+			
+			}
+
+			protected function titlewindow1_initializeHandler(event:FlexEvent):void
+			{
+				this.consumer = new Consumer();
+				var channelSet:ChannelSet = new ChannelSet();
+				var endPoint:String = ServiceUtils.getMessagingEndpoint();
+				var amf:AMFChannel = new AMFChannel(
+					"my-polling-amf", 
+					endPoint);
+				amf.pollingEnabled = true;
+				channelSet.addChannel(amf);
+				
+				this.consumer.channelSet = channelSet;
+				this.consumer.destination = "serverUpdates";
+				
+				this.consumer.addEventListener(MessageEvent.MESSAGE, messageHandler);
+				this.consumer.addEventListener(MessageFaultEvent.FAULT, faultHandler);	
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+		<mx:ProgressBar id="progressBar"
+						width="100%" 
+						mode="manual" 
+						label="Processing %1 out of %2" 
+						labelWidth="400"/>   
+		
+		<s:Label id="progressMessages"
+				 text="{message}"/>   
+			
+	<s:HGroup> 
+		
+		<s:Button label="Cancel"
+				  click="handleCloseEvent();"/> 
+	</s:HGroup> 
+	
+</s:TitleWindow>

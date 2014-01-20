@@ -14,14 +14,11 @@
 	<fx:Script>
 		<![CDATA[
 			
-			import edu.isi.bmkeg.triageModule.events.*;
+			import edu.isi.bmkeg.digitalLibrary.model.qo.citations.*;
+			import edu.isi.bmkeg.triage.model.qo.*;
 			import edu.isi.bmkeg.triage.rl.events.*;
+			import edu.isi.bmkeg.triageModule.events.*;
 			
-			import edu.isi.bmkeg.pagedList.PagedList;
-			
-			import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
-			
-			import mx.collections.ArrayCollection;
 			import mx.collections.IList;
 			import mx.collections.errors.ItemPendingError;
 			
@@ -29,10 +26,7 @@
 			
 			[Bindable]
 			public var listLength:int;
-
-			[Bindable]
-			public var typItem:Object;
-
+			
 			private var _triageDocumentsCollection:IList;
 			
 			[Bindable]
@@ -56,89 +50,78 @@
 				triageDocumentListDataGrid.setSelectedIndex(v);
 			}
 			
-			public function init():void {
-
-				this.typItem = {
-						"ArticleCitation_7" : "12345678",
-						"ArticleCitation" : "not too long",
-						"TriagedArticle_2" : "unclassified",
-						"TriagedArticle_3" : "0.667"
-				};
-				
-				triageDocumentListDataGrid.addEventListener(KeyboardEvent.KEY_UP, keyHandler);
-			
+			public function init():void 
+			{
+				//triageDocumentListDataGrid.addEventListener(KeyboardEvent.KEY_UP, keyHandler);
 			}
-				
-			private function keyHandler(event:KeyboardEvent):void {
+			
+/*			private function keyHandler(event:KeyboardEvent):void 
+			{
 				
 				// left cursor towards 'in'
 				if( event.keyCode == 37 || event.keyCode == 187 ) {
 					dispatchEvent( new SwitchInOutEvent(SwitchInOutEvent.IN) );
 				} 
-				// right cursor towards 'out'
+					// right cursor towards 'out'
 				else if(event.keyCode == 39 || event.keyCode == 189) {
 					dispatchEvent( new SwitchInOutEvent(SwitchInOutEvent.OUT) );					
 				}
-				// delete key towards 'unclassified'
+					// delete key towards 'unclassified'
 				else if(event.keyCode == 8 || event.keyCode == 46) {
 					dispatchEvent( new SwitchInOutEvent(SwitchInOutEvent.UNCLASSIFIED) );					
 				}
-			}
+			}*/
 			
 			public function clearSelection():void {
 				
 				triageDocumentListDataGrid.clearSelection();
-			
+				
 			}
 			
 			private function popupFormatter(item:Object, column:GridColumn):String {
-			
-				return item.vpdmfLabel;
-			
+				
+				return item.citation;
+				
 			}
 			
 			private function selectionChangeHandler(event:GridSelectionEvent):void {
-			
+					
 				var o:Object = triageDocumentListDataGrid.selectedItem;	
-				dispatchEvent(new FindTriageScoreByIdEvent(o.vpdmfId));
-			
+				var id:Number = Number(o.vpdmfId); 
+				
+				dispatchEvent(new FindTriagedArticleByIdEvent(id));
+				
 			}
 			
 			private function createPendingItem(index:int, ipe:ItemPendingError):Object {
-				
-				return {title: "..."};        
-			
+				return {citation: "..."};        
 			}
+
+			public function inOutLabelFunction(item:Object, column:GridColumn):String {
+				var cName:String = column.headerText;
+				return item[cName + ".inOut"];
+			}
+			
 		]]>
 	</fx:Script>
 	<s:DataGrid id="triageDocumentListDataGrid" width="100%" height="100%" 
 				dataProvider="{asyncListView}"
 				selectionMode="multipleRows"
-  			    typicalItem="{typItem}"
 				selectionChange="selectionChangeHandler(event)"
-				sortableColumns="true">
+				resizableColumns="false"
+				sortableColumns="false">
 		<s:columns>
 			<s:ArrayList>
 				<s:GridColumn headerText="PMID"  
-							  dataField="ArticleCitation_7"
+							  dataField="pmid"
 							  dataTipFunction="popupFormatter"
 							  showDataTips="true"
 							  width="100"/>
 				<s:GridColumn headerText="Citation" 
-							  dataField="ArticleCitation"
+							  dataField="citation"
 							  dataTipFunction="popupFormatter"
 							  showDataTips="true"/>
-				<s:GridColumn headerText="Classification"  
-							  dataField="TriagedArticle_2"
-							  dataTipFunction="popupFormatter"
-							  showDataTips="true"
-							  width="100"/>
-				<s:GridColumn headerText="Score"  
-							  dataField="TriagedArticle_3"
-							  dataTipFunction="popupFormatter"
-							  showDataTips="true"
-							  width="100"
-						   sortable="true"/>
+
 			</s:ArrayList>
 		</s:columns>
 	</s:DataGrid>

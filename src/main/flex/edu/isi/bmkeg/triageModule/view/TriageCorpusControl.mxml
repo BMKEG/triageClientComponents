@@ -3,8 +3,7 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx" 
 		 xmlns:hc="com.hillelcoren.components.*"
-		 width="100%" height="100%"
-		 initialize="init(event)">
+		 width="100%" height="100%">
 	<s:layout>
 		<s:VerticalLayout/>
 	</s:layout>
@@ -14,105 +13,41 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import edu.isi.bmkeg.digitalLibrary.events.ActivateCorpusPopupEvent;
 			import edu.isi.bmkeg.digitalLibrary.model.citations.Corpus;
 			import edu.isi.bmkeg.digitalLibrary.rl.events.FindCorpusByIdEvent;
 			import edu.isi.bmkeg.digitalLibrary.rl.events.ListCorpusEvent;
 			import edu.isi.bmkeg.triage.events.*;
 			import edu.isi.bmkeg.triage.model.TriageCorpus;
-			import edu.isi.bmkeg.triage.model.qo.TriageCorpus_qo;
-			import edu.isi.bmkeg.triage.rl.events.FindTriageCorpusByIdEvent;
-			import edu.isi.bmkeg.triage.rl.events.ListTriageCorpusEvent;
+			import edu.isi.bmkeg.triage.model.qo.*;
+			import edu.isi.bmkeg.triage.rl.events.*;
+			import edu.isi.bmkeg.triageModule.events.*;
+			import edu.isi.bmkeg.triageModule.view.popups.*;
 			import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 			
 			import mx.collections.ArrayCollection;
-			import mx.events.FlexEvent;
 			
 			import spark.events.IndexChangeEvent;
-			
-			[Bindable]
-			public var corpusList:ArrayCollection = new ArrayCollection();
 
 			[Bindable]
-			public var slaveList:ArrayCollection = new ArrayCollection();
+			public var triageCorpus:TriageCorpus;
 			
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// When you select a corpus, go get it. 
-			//
-			protected function handle_corpusComboChange(event:IndexChangeEvent):void
-			{
+			[Bindable]
+			public var triageCorpusList:ArrayCollection = new ArrayCollection();
 
-				var i:int = event.newIndex;
-				
-				if( i >= 0 ) {
-					
-					var o:Object = corpusCombo.dataProvider.getItemAt(i);
-					var lvi:LightViewInstance = LightViewInstance(o);
-					var vpdmfId:Number = lvi.vpdmfId;
-					
-					var m:Corpus = new Corpus();
-					m.vpdmfId = vpdmfId
-					this.dispatchEvent( new FindCorpusByIdEvent(vpdmfId) );
-					
-				} 
-				
-			}
-			
+			[Bindable]
+			public var targetCorpusList:ArrayCollection = new ArrayCollection();
+						
 			protected function handle_triageCorpusComboChange(event:IndexChangeEvent):void
 			{
 				var i:int = event.newIndex;
 				if( i >= 0 ) {
 					var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
 					var vpdmfId:Number= lvi.vpdmfId;
+					
 					this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "") );
+				
 				}
-			}
-
-			protected function handle_inOutButton_all(event:MouseEvent):void {
-				var i:int = triageCorpusCombo.selectedIndex;
-				
-				if( i < 0 )
-					return;
-				
-				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
-				var vpdmfId:Number= lvi.vpdmfId;
-				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "") );
-				
-			}
-			
-			protected function handle_inOutButton_unclassified(event:MouseEvent):void {
-				var i:int = triageCorpusCombo.selectedIndex;
-				
-				if( i < 0 )
-					return;
-				
-				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
-				var vpdmfId:Number= lvi.vpdmfId;
-				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "unclassified") );
-				
-			}
-			
-			protected function handle_inOutButton_in(event:MouseEvent):void {
-				var i:int = triageCorpusCombo.selectedIndex;
-				
-				if( i < 0 )
-					return;
-				
-				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
-				var vpdmfId:Number= lvi.vpdmfId;
-				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "in") );
-				
-			}
-			
-			protected function handle_inOutButton_out(event:MouseEvent):void {
-				var i:int = triageCorpusCombo.selectedIndex;
-				
-				if( i < 0 ) 
-					return; 
-				
-				var lvi:LightViewInstance = LightViewInstance(triageCorpusCombo.dataProvider.getItemAt(i));
-				var vpdmfId:Number= lvi.vpdmfId;
-				this.dispatchEvent( new SelectTriageCorpusEvent(vpdmfId, "out") );
-				
 			}
 			
 			//
@@ -128,69 +63,119 @@
 				return lvi.vpdmfLabel;
 				
 			}
-						
-			protected function init(event:FlexEvent):void {
-				inOutButton_all.selected = true;
+				
+			protected function addButton_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent(new ActivateCorpusPopupEvent(new Corpus()));
+			}
+			
+			protected function corpusCombo_doubleClickHandler(event:MouseEvent):void
+			{				
+				this.dispatchEvent(new ActivateCorpusPopupEvent(this.triageCorpus));
+			}
+			
+			protected function removeButton_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent( new DeleteTriageCorpusByIdEvent(this.triageCorpus.vpdmfId) );
+			}
+
+			protected function uploadButton_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent(new ActivateUploadPdfPopupEvent(triageCorpus));
+			}
+			
+			protected function triageClassificationModelGrid_clickHandler(event:MouseEvent):void
+			{
+				var lvi:LightViewInstance = triageClassificationList.selectedItem;
+				if( lvi.vpdmfLabel.substr(0,4) == "[-] ") {
+					predictButton.enabled = false;
+					trainButton.enabled = true;
+				} else {
+					predictButton.enabled = true;
+					trainButton.enabled = true;
+				}
+			}
+			
+			protected function trainButton_clickHandler(event:MouseEvent):void
+			{
+				
+				var lvi:LightViewInstance = triageClassificationList.selectedItem;
+				var targetCorpusName:String = lvi.vpdmfLabel.substr(4);
+				
+				this.dispatchEvent(new TrainClassifierEvent(targetCorpusName));
+				
+				this.dispatchEvent(new ActivateClassifierPopupEvent());
+				
+			}
+			
+			protected function predictButton_clickHandler(event:MouseEvent):void
+			{
+
+				var lvi:LightViewInstance = triageClassificationList.selectedItem;
+				var targetCorpusName:String = lvi.vpdmfLabel.substr(4);
+
+				this.dispatchEvent(new RunClassifierPredictEvent(
+					targetCorpusName, 
+					this.triageCorpus.name));				
+				
+				this.dispatchEvent(new ActivateClassifierPopupEvent());
+				
 			}
 			
 		]]>
 	</fx:Script>
 	
-	<s:Label top="10" fontSize="12" fontWeight="bold"
-			 horizontalCenter="0" text="Target Corpus"/>
+	<s:Label top="10" fontSize="16" fontWeight="bold"
+			 horizontalCenter="0" text="Triage Corpus"/>
 
-	<s:Group>
+	<s:List id="triageCorpusCombo" width="100%" height="50%"
+			change="handle_triageCorpusComboChange(event)"
+			dataProvider="{triageCorpusList}"
+			labelFunction="myLabelFunc"/>
+	
+	<s:Group width="100%" height="25">
 		<s:layout>
-			 <s:HorizontalLayout />
-		 </s:layout>
-		<s:ComboBox id="corpusCombo" width="96%"
-					change="handle_corpusComboChange(event)"
-					dataProvider="{corpusList}"
-					labelFunction="myLabelFunc"
-					/>
-
-		<!--	<s:Button id="addOesButton" width="37" height="22" label="+" fontSize="16"/>
-		<s:Button id="removeOesButton" width="37" height="22" label="-" fontSize="16"/>-->
+			<s:HorizontalLayout />
+		</s:layout>
+		<s:Button id="addButton" width="37" height="22" 
+				  label="+" 
+				  fontSize="16" 
+				  click="addButton_clickHandler(event)"
+				  toolTip="Add a new Triage Corpus to the system"/>
+		<s:Button id="removeButton" width="37" height="22" 
+				  label="-" 
+				  fontSize="16" 
+				  click="removeButton_clickHandler(event)"
+				  toolTip="Delete this Triage Corpus from the system"/>
+		<s:Button id="uploadButton" width="37" height="22" 
+				  label="^" 
+				  fontSize="16" 
+				  click="uploadButton_clickHandler(event)"
+				  toolTip="Upload coded PDFs to the system"/>
 	</s:Group>
 
-	<s:Label top="10" fontSize="12" fontWeight="bold"
-			 horizontalCenter="0" text="Triage Corpus"/>
+	<s:Label top="10" fontSize="16" fontWeight="bold"
+			 horizontalCenter="0" text="Classifiers"/>
+
+	<s:List id="triageClassificationList" width="100%" height="100%" 
+				dataProvider="{targetCorpusList}"
+				click="triageClassificationModelGrid_clickHandler(event)"
+				labelField="vpdmfLabel"/>
+
+	<s:Group width="100%" height="25">
+		<s:layout>
+			<s:HorizontalLayout />
+		</s:layout>
+		<s:Button id="trainButton" height="22" 
+				  label="Train..." 
+				  fontSize="12" 
+			      click="trainButton_clickHandler(event)"
+				  toolTip="Train Classifier on In/Out documents across triage corpora"/>
+		<s:Button id="predictButton" height="22" 
+				  label="Predict..." 
+				  fontSize="12" 
+				  click="predictButton_clickHandler(event)"
+				  toolTip="Use existing Classifier to predict all Unclassified documents across triage corpora"/>
+	</s:Group>
 	
-	<s:Group width="100%" height="50%">
-		<s:layout>
-			<s:HorizontalLayout/>
-		</s:layout>
-		<s:List id="triageCorpusCombo" width="100%" height="100%"
-					change="handle_triageCorpusComboChange(event)"
-					dataProvider="{slaveList}"
-					labelFunction="myLabelFunc"
-					enabled="false"
-					/>
-		<!--	<s:Button id="addOesButton" width="37" height="22" label="+" fontSize="16"/>
-		<s:Button id="removeOesButton" width="37" height="22" label="-" fontSize="16"/>-->
-	</s:Group>	
-
-	<s:Label top="10" fontSize="12" fontWeight="bold"
-			 horizontalCenter="0" 
-			 text="Classification types to show."/>
-
-	<s:Group>
-		<s:layout>
-			<s:VerticalLayout />
-		</s:layout>
-		<s:RadioButton id="inOutButton_all" left="5" top="5" label="All"
-					   groupName="triageButtonGroup"
-					   click="handle_inOutButton_all(event)"/>
-		<s:RadioButton id="inOutButton_unclassified" left="5" top="5" label="Unclassified"
-					   groupName="triageButtonGroup"
-					   click="handle_inOutButton_unclassified(event)"/>
-		<s:RadioButton id="inOutButton_in" left="5" top="5" label="In"
-					   groupName="triageButtonGroup"
-					   click="handle_inOutButton_in(event)"/>
-		<s:RadioButton id="inOutButton_out" left="5" top="5" label="Out"
-					   groupName="triageButtonGroup"
-					   click="handle_inOutButton_out(event)"/>
-	</s:Group>	
-
-		
 </s:Group>

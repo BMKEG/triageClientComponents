@@ -5,11 +5,14 @@ package edu.isi.bmkeg.triageModule.view
 	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.triage.events.*;
 	import edu.isi.bmkeg.triage.model.*;
-	import edu.isi.bmkeg.triage.model.qo.TriageCorpus_qo;
-	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
+	import edu.isi.bmkeg.triage.model.qo.*;
 	import edu.isi.bmkeg.triage.rl.events.*;
+	import edu.isi.bmkeg.triageModule.events.*;
 	import edu.isi.bmkeg.triageModule.model.TriageModel;
+	import edu.isi.bmkeg.triageModule.view.popups.*;
 	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
+	
+	import mx.managers.PopUpManager;
 	
 	import org.robotlegs.mvcs.Mediator;
 	
@@ -23,46 +26,58 @@ package edu.isi.bmkeg.triageModule.view
 		
 		override public function onRegister():void
 		{
-									
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// list the corpora. 
-			addViewListener(ListCorpusEvent.LIST_CORPUS, 
-				dispatch);
-			addContextListener(ListCorpusResultEvent.LIST_CORPUS_RESULT, 
-				listCorpusResultHandler);
-			
-			addViewListener(FindCorpusByIdEvent.FIND_CORPUS_BY_ID, 
-				dispatchFindCorpusById);
-			addContextListener(FindCorpusByIdResultEvent.FIND_CORPUSBY_ID_RESULT, 
-				handleLoadedTargetCorpus);
-			
+												
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// List the triage corpora. 
 			addViewListener(ListTriageCorpusEvent.LIST_TRIAGECORPUS, 
 				dispatch);
-			addContextListener(ListTriageCorpusResultEvent.LIST_TRIAGECORPUS_RESULT, 
-				listTriageCorpusResultHandler);
+			
+			addViewListener(ActivateUploadPdfPopupEvent.ACTIVATE_PDF_UPLOAD_POPUP, 
+				activatePdfUploadPopup);
+
+			addViewListener(ActivateClassifierPopupEvent.ACTIVATE_CLASSIFIER_POPUP, 
+				activateClassifierPopup);
+			
 			addViewListener(SelectTriageCorpusEvent.SELECT_TRIAGE_CORPUS, 
 				dispatchSelectTriageCorpus);
-			
-			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			// Reset everything
+
 			addViewListener(ClearTriageCorpusEvent.CLEAR_TRIAGE_CORPUS, 
 				dispatch);
+
+			addViewListener(TrainClassifierEvent.TRAIN_CLASSIFIER, 
+				dispatch);
+
+			addViewListener(RunClassifierPredictEvent.RUN_CLASSIFIER_PREDICT, 
+				dispatch);
+
+			addContextListener(FindTriageCorpusByIdResultEvent.FIND_TRIAGECORPUSBY_ID_RESULT, 
+				findTriageCorpusByIdResultHandler);
+
+			addContextListener(ListCorpusResultEvent.LIST_CORPUS_RESULT, 
+				listCorpusResultHandler);
+
+			addContextListener(ListTriageClassificationModelResultEvent.LIST_TRIAGECLASSIFICATIONMODEL_RESULT, 
+				listTriageClassificationModelResultHandler);
 			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// On loading this control, we first list all the corpora on the server
 			dispatch(new ListCorpusEvent(new Corpus_qo()));
-			dispatch(new ListTriageCorpusEvent(new TriageCorpus_qo()));
 			
+			view.predictButton.enabled = false;
+			view.trainButton.enabled = false;
+			
+		}
+		
+		public function findTriageCorpusByIdResultHandler(event:FindTriageCorpusByIdResultEvent):void {
+			view.triageCorpus = event.object;
 		}
 
 		public function listCorpusResultHandler(event:ListCorpusResultEvent):void {
-			view.corpusList = triageModel.corpora;
+			view.triageCorpusList = triageModel.triageCorpora;
 		}
-
-		public function listTriageCorpusResultHandler(event:ListTriageCorpusResultEvent):void {
-			view.slaveList = event.list;
+		
+		public function listTriageClassificationModelResultHandler(event:ListTriageClassificationModelResultEvent):void {
+			view.targetCorpusList = triageModel.classificationModels;
 		}
 		
 		public function dispatchFindCorpusById(event:FindCorpusByIdEvent):void {
@@ -80,31 +95,33 @@ package edu.isi.bmkeg.triageModule.view
 			
 			triageModel.triageCorpus = new TriageCorpus();
 			triageModel.triageCorpus.vpdmfId = event.vpdmfId;
-			triageModel.currentInOutCode = event.inOutCode;
+			//triageModel.currentInOutCode = event.inOutCode;
 				
+			this.dispatch(new FindTriageCorpusByIdEvent(event.vpdmfId));
 			this.dispatchListTriageScoreListPaged();
-			
-			this.dispatch(new FindTriageCorpusByIdEvent(event.vpdmfId) );
 		
 		}
 		
 		private function dispatchListTriageScoreListPaged():void {
 
 			var ts:TriageScore_qo = new TriageScore_qo();
-			var tc:TriageCorpus_qo = new TriageCorpus_qo();
-			var tt:Corpus_qo = new Corpus_qo();
-			
+			ts.inScore = "<vpdmf-rev-sort-1>"
+			var tc:TriageCorpus_qo = new TriageCorpus_qo();			
 			ts.triageCorpus = tc;
-			ts.targetCorpus = tt;
+			var lc:LiteratureCitation_qo = new LiteratureCitation_qo();
+			lc.vpdmfId = "<vpdmf-rev-sort-0>"
 			
-			if( triageModel.triageCorpus != null 
-				&& triageModel.targetCorpus != null) {	
+			ts.citation = lc;
+			
+			if( triageModel.triageCorpus != null ) {	
 			
 				tc.vpdmfId = String(triageModel.triageCorpus.vpdmfId);
-				tt.vpdmfId = String(triageModel.targetCorpus.vpdmfId);
-				ts.inOutCode = triageModel.currentInOutCode;
-				
-				this.dispatch(new ListTriageScoreListPagedEvent(ts, 0, triageModel.listPageSize));
+				//ts.inOutCode = triageModel.currentInOutCode;
+		
+				this.dispatch(new ListTriageScoreListPagedEvent(
+					ts, 
+					0, 
+					triageModel.listPageSize * view.targetCorpusList.length));
 			
 			}
 			
@@ -128,13 +145,37 @@ package edu.isi.bmkeg.triageModule.view
 
 		}
 		
+		private function activatePdfUploadPopup(e:ActivateUploadPdfPopupEvent):void {
+			
+			if( e.triageCorpus == null )
+				return;
+			
+			var popup:UploadPdfsPopup = PopUpManager.createPopUp(this.view, UploadPdfsPopup, true) as UploadPdfsPopup;
+			PopUpManager.centerPopUp(popup);
+			
+			mediatorMap.createMediator( popup );
+			
+			popup.tc = e.triageCorpus;
+			
+		}
+		
+		private function activateClassifierPopup(e:ActivateClassifierPopupEvent):void {
+			
+			var popup:ClassifierPopup = PopUpManager.createPopUp(this.view, ClassifierPopup, true) as ClassifierPopup;
+			PopUpManager.centerPopUp(popup);
+			
+			mediatorMap.createMediator( popup );
+						
+		}
+		
+		
+		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 		// Reset everything
 		//
 		public function clearTriageCorpusHandler(event:ClearTriageCorpusEvent):void {
 
 			view.currentState = "empty";
-			view.corpusCombo.selectedIndex = -1;
 			dispatch(new ListCorpusEvent(new Corpus_qo()));
 			
 		}

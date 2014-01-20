@@ -6,6 +6,7 @@
 		   xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		   xmlns:mx="library://ns.adobe.com/flex/mx"
 		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:digLibView="edu.isi.bmkeg.digitalLibraryModule.view.*"
 		   implements="org.robotlegs.utilities.modular.core.IModule"
 		   xmlns:view="edu.isi.bmkeg.triageModule.view.*"
 		   xmlns:dlView="edu.isi.bmkeg.digitalLibrary.citations.view.*"
@@ -80,45 +81,9 @@
     
 	</fx:Script>
 	<mx:HDividedBox width="100%" height="100%">
-		<s:Group width="200" height="100%">
-			<s:layout>
-				<s:BasicLayout/>
-			</s:layout>
-			<view:TriageCorpusControl id="corpusControl" left="5" right="0" top="10" />
-		</s:Group>
-		<s:Group width="50%" height="100%">
-			<s:layout>
-				<s:BasicLayout/>
-			</s:layout>
-			<mx:TabNavigator left="5" 
-							  right="5" 
-							  top="10" 
-							  bottom="10" >
-				<s:NavigatorContent  label="Target Corpus" >
-					<view:TargetArticleList id="targetCorpusList" 
-											width="100%" height="100%" />
-				</s:NavigatorContent>
-				<s:NavigatorContent label="Triage Corpus" >
-					<view:TriagedArticleList id="triageCorpusList" 
-											 width="100%" height="100%" />
-				</s:NavigatorContent>
-			</mx:TabNavigator>
-		</s:Group>
-		<mx:TabNavigator width="50%" height="100%" >
-			<s:NavigatorContent label="Citation" >
-				<s:Group width="100%" height="100%" >
-					<s:layout>
-						<s:BasicLayout/>
-					</s:layout>
-					<s:Scroller left="5" right="10" top="36" bottom="10">
-						<view:TriagedArticleCitationView width="100%" height="100%"/>									
-					</s:Scroller>
-				</s:Group>									
-			</s:NavigatorContent>
-			<s:NavigatorContent label="FlexPaper" >
-				<fp:FlexPaperViewer id="flexPaperViewer" width="100%" height="100%"/>
-			</s:NavigatorContent>
-		</mx:TabNavigator>
+		<view:TriageCorpusControl id="corpusControl" width="150" />
+		<view:TriagedArticleList id="triageCorpusList" width="50%" height="100%" />
+		<view:ExplanationFeatureDisplay width="300" height="100%"/>									
 	</mx:HDividedBox>
 	
 </mx:Module>

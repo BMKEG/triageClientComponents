@@ -9,6 +9,8 @@ package edu.isi.bmkeg.utils
 	{
 
 		public static const AMF_CHANNEL_PATH:String = "messagebroker/amf";
+		
+		public static const AMF_CHANNEL_PATH_POLLING:String = "messagebroker/amfpolling";
 
 		/**
 		 * Returns the url from which this application was loaded.
@@ -39,5 +41,10 @@ package edu.isi.bmkeg.utils
 		public static function getRemotingEndpoint():String {
 			return '/' + ServiceUtils.getWebAppContext() + '/' + AMF_CHANNEL_PATH
 		}		
+
+		public static function getMessagingEndpoint():String {
+			return '/' + ServiceUtils.getWebAppContext() + '/' + AMF_CHANNEL_PATH_POLLING
+		}		
+
 	}
 }

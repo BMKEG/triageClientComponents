@@ -1,6 +1,6 @@
 package edu.isi.bmkeg.triageModule.controller
 {	
-	import edu.isi.bmkeg.digitalLibrary.model.citations.Corpus;
+	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
 	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 
 	import edu.isi.bmkeg.triage.model.TriageCorpus;
@@ -25,7 +25,7 @@ package edu.isi.bmkeg.triageModule.controller
 		override public function execute():void
 		{
 			
-			model.currentCitation = event.object.citation;
+			model.currentCitation = ArticleCitation( event.object.citation );
 			
 		}
 		
