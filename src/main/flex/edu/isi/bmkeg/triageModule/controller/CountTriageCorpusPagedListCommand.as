@@ -32,7 +32,7 @@ package edu.isi.bmkeg.triageModule.controller
 		
 		override public function execute():void {
 			if( model.queryTriagedDocument != null ) { 
-				triageService.countTriageScoreList(model.queryTriagedDocument);
+				triageService.countTriagedArticle(model.queryTriagedDocument);
 			}		
 		}
 		

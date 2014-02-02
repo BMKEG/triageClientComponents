@@ -2,7 +2,7 @@ package edu.isi.bmkeg.triageModule.controller
 {	
 	import edu.isi.bmkeg.digitalLibrary.model.citations.*;
 	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.*;
-	import edu.isi.bmkeg.triage.rl.events.ListTriageScoreListPagedEvent;
+	import edu.isi.bmkeg.triage.rl.events.*;
 	import edu.isi.bmkeg.triage.events.*;
 	import edu.isi.bmkeg.triage.model.qo.TriageCorpus_qo;
 	import edu.isi.bmkeg.triage.model.qo.TriageScore_qo;
@@ -28,7 +28,13 @@ package edu.isi.bmkeg.triageModule.controller
 			tsQo.triageCorpus = tcQo;
 			tcQo.name = model.triageCorpus.name;
 			
-//			this.dispatch(new ListTriageScoreListPagedEvent(tsQo, 0, 100) );
+			//
+			// model.queryCorpusCount controls the number of columns 
+			// filled in on the TriageArticleList
+			//
+			model.queryCorpusCount = model.corpora.length;
+
+			this.dispatch(new ListTriagedArticlePagedEvent(tsQo, 0, 100) );
 
 		}
 		

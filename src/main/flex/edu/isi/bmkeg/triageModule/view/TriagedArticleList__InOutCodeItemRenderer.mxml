@@ -10,6 +10,7 @@
 		<s:HorizontalLayout paddingLeft="2" paddingRight="2" 
 							paddingTop="2" paddingBottom="2"/>
 	</s:layout>
+
 	
 	<fx:Script>
 		<![CDATA[
@@ -26,42 +27,77 @@
 			import spark.primitives.*;
 			
 			private var uiC:UIComponent;
+			private var s:Sprite;			
 			
+			[Bindable]
+			public var code:String = "";
+			
+			[Bindable]
+			public var spacerWidth:Number;
+
 			override public function set data(value:Object):void { 
 				
 				super.data = value; 
 				
+				if( inOutControl == null )
+					return;
+				
 				var cName:String = this.column.headerText;
 				var score:Number = data[cName + ".score"];
-				
-				try { 
-					if( uiC != null )
-						removeElement(uiC);
-				} catch (oops:ArgumentError) { 
-					trace("Can't drop update box: "+oops); 
+
+				if( uiC == null ) {
+					uiC = new UIComponent();
+					var h:int = inOutControl.height - 4;
+					uiC.width = h+2;
+					uiC.height = h+2;	
+					addElementAt(uiC,0);
+					s = new Sprite();
+					s.graphics.clear();
+					uiC.addChild(s);
+				} 
+
+				if( data[column.dataField] == null ) {
+
+					this.code = "";
+					this.inOutControl.visible = false;
+					
+				} else if( data[column.dataField] == "unclassified" ) {
+
+					this.code = "?";
+					this.inOutControl.visible = true;
+					
+				} else if( data[column.dataField] == "in" ) {
+					
+					this.code = "+";
+					this.inOutControl.visible = true;
+					
+				} else if( data[column.dataField] == "out" ) {
+					
+					this.code = "-"
+					this.inOutControl.visible = true;
+
 				} 
 				
-				if( score > 0 ) {
-					
-					uiC = new UIComponent();
-					uiC.width = inOutControl.height/2.0;
-					uiC.height = inOutControl.height;
+				if( !isNaN(score) && score != -1 ) {
+		
+					var hh:Number = 22;
+					uiC.width = hh+2;
+					uiC.height = hh+2;		
 					
 					uiC.toolTip = score + "";
 					
-					var g:Sprite = new Sprite();
-					g.graphics.moveTo(0,0);
-					g.graphics.beginFill(0xffffff);
-					g.graphics.lineStyle(1, 0x000000);
-					g.graphics.drawRect(0,0,(inOutControl.height/2.0)+2,(inOutControl.height)+2);
-					g.graphics.endFill();
-					g.graphics.beginFill(0x058C24);
-					g.graphics.lineStyle(1, 0x000000, 0.0);
-					g.graphics.drawRect(1,1+(inOutControl.height)*(1.0-score),
-						(inOutControl.height/2.0)+1,(inOutControl.height)*(score));
-					g.graphics.endFill();
-					uiC.addChild(g);
-					addElementAt(uiC,0);
+					s.graphics.clear();
+					s.graphics.moveTo(0,0);
+					s.graphics.beginFill(0x058C24);
+					s.graphics.lineStyle(1, 0x000000, 0.0);
+					s.graphics.drawRect( 1.0, hh * (1.0-score), hh/2.0, hh * score );
+					s.graphics.endFill();
+					
+				} else {
+
+					s.graphics.clear();
+					uiC.toolTip = "";
+				
 				}
 				
 			} 
@@ -70,6 +106,11 @@
 				
 				var list:DropDownList = DropDownList(event.currentTarget);
 				var val:String = list.selectedItem;
+				
+				var existingValue:String = data[column.dataField];
+				
+				if( existingValue == val )
+					return;
 				
 				if( val == SwitchInOutEvent.IN ) {
 					
@@ -90,18 +131,22 @@
 				
 			}
 			
+			
+			
 		]]>
 	</fx:Script>
 	
+	<s:Spacer width="100%" minWidth="1"/>
+		
 	<s:DropDownList id="inOutControl"
 					chromeColor="white"
-					width="100%" height="100%" 
-					selectedItem="{data[column.dataField]}" 
+					width="45" height="100%" 
+				 	selectedItem="{code}" 
 					close="dropdownlist1_closeHandler(event)" >
 		<mx:ArrayCollection>
-			<fx:String>in</fx:String>
-			<fx:String>out</fx:String>
-			<fx:String>unclassified</fx:String>
+			<fx:String>+</fx:String>
+			<fx:String>-</fx:String>
+			<fx:String>?</fx:String>
 		</mx:ArrayCollection>
 	</s:DropDownList>
 	

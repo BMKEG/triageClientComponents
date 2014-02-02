@@ -31,6 +31,7 @@ package edu.isi.bmkeg.triageModule.model
 		public var triageCorpus:Corpus;		
 				
 		public var queryTriagedDocument:TriageScore_qo;
+		public var queryCorpusCount:int;
 
 		public var queryLiteratureCitation:LiteratureCitation_qo;
 

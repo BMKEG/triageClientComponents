@@ -85,7 +85,7 @@ package edu.isi.bmkeg.triageModule.view
 			triageModel.targetCorpus = new Corpus();
 			triageModel.targetCorpus.vpdmfId = event.id;
 			
-			this.dispatchListTriageScoreListPaged();
+			this.dispatchListTriagedArticlePaged();
 
 			this.dispatch( event );
 			
@@ -98,11 +98,11 @@ package edu.isi.bmkeg.triageModule.view
 			//triageModel.currentInOutCode = event.inOutCode;
 				
 			this.dispatch(new FindTriageCorpusByIdEvent(event.vpdmfId));
-			this.dispatchListTriageScoreListPaged();
+			this.dispatchListTriagedArticlePaged();
 		
 		}
 		
-		private function dispatchListTriageScoreListPaged():void {
+		private function dispatchListTriagedArticlePaged():void {
 
 			var ts:TriageScore_qo = new TriageScore_qo();
 			ts.inScore = "<vpdmf-rev-sort-1>"
@@ -117,11 +117,12 @@ package edu.isi.bmkeg.triageModule.view
 			
 				tc.vpdmfId = String(triageModel.triageCorpus.vpdmfId);
 				//ts.inOutCode = triageModel.currentInOutCode;
-		
-				this.dispatch(new ListTriageScoreListPagedEvent(
+				
+				triageModel.queryCorpusCount = triageModel.corpora.length;		
+				this.dispatch(new ListTriagedArticlePagedEvent(
 					ts, 
 					0, 
-					triageModel.listPageSize * view.targetCorpusList.length));
+					triageModel.listPageSize * triageModel.queryCorpusCount));
 			
 			}
 			

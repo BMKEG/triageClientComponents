@@ -126,12 +126,12 @@ package edu.isi.bmkeg.triageModule
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// Run a paged list query for TriageDocument objects
 			// associated with a given TriageCorpus. 
-			commandMap.mapEvent(ListTriageScoreListPagedEvent.LIST_TRIAGESCORELIST_PAGED, 
-				ListTriageScoreListPagedCommand);
-			commandMap.mapEvent(ListTriageScoreListPagedResultEvent.LIST_TRIAGESCORELIST_PAGED_RESULT, 
-				ListTriageScoreListPagedResultCommand);
-			commandMap.mapEvent(CountTriageScoreListResultEvent.COUNT_TRIAGESCORELIST_RESULT, 
-				CountTriageScoreListResultCommand);
+			commandMap.mapEvent(ListTriagedArticlePagedEvent.LIST_TRIAGEDARTICLE_PAGED, 
+				ListTriagedArticlePagedCommand);
+			commandMap.mapEvent(ListTriagedArticlePagedResultEvent.LIST_TRIAGEDARTICLE_PAGED_RESULT, 
+				ListTriagedArticlePagedResultCommand);
+			commandMap.mapEvent(CountTriagedArticleResultEvent.COUNT_TRIAGEDARTICLE_RESULT, 
+				CountTriagedArticleResultCommand);
 			commandMap.mapEvent(PagedListRetrievePageEvent.PAGEDLIST_RETRIEVE_PAGE
 					+TriageCorpusPagedListModel.LIST_ID, 
 					TriageCorpusPagedListRetrievePageCommand);

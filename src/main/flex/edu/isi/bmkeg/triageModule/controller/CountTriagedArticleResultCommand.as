@@ -4,15 +4,15 @@ package edu.isi.bmkeg.triageModule.controller
 
 	import edu.isi.bmkeg.triage.rl.services.ITriageService;
 	import edu.isi.bmkeg.triageModule.model.*;
-	import edu.isi.bmkeg.triage.rl.events.*;
+	import edu.isi.bmkeg.triage.rl.events.CountTriagedArticleResultEvent;
 	
 	import flash.events.Event;
 	
-	public class CountTriageScoreListResultCommand extends Command
+	public class CountTriagedArticleResultCommand extends Command
 	{
 	
 		[Inject]
-		public var event:CountTriageScoreListResultEvent;
+		public var event:CountTriagedArticleResultEvent;
 
 		[Inject]
 		public var listModel:TriageCorpusPagedListModel;
@@ -21,11 +21,12 @@ package edu.isi.bmkeg.triageModule.controller
 		public var triageModel:TriageModel;
 
 		override public function execute():void {
-
-			if( triageModel.corpora.length > 0 ) {
+			
+			if( triageModel.queryCorpusCount > 0 ) {
 				listModel.pagedListLength = event.count / 
-						triageModel.corpora.length;
+						triageModel.queryCorpusCount;
 			}		
+			
 		}
 		
 	}

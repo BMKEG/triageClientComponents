@@ -1,24 +1,24 @@
 package edu.isi.bmkeg.triageModule.view
 {
 	
+	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.*;
 	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.pagedList.events.*;
 	import edu.isi.bmkeg.pagedList.model.*;
 	import edu.isi.bmkeg.triage.events.*;
 	import edu.isi.bmkeg.triage.model.*;
+	import edu.isi.bmkeg.triage.model.qo.*;
 	import edu.isi.bmkeg.triage.rl.events.*;
 	import edu.isi.bmkeg.triageModule.events.*;
 	import edu.isi.bmkeg.triageModule.model.*;
-	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 	
-	import mx.collections.ArrayCollection;
-	import mx.collections.IList;
 	import mx.core.ClassFactory;
 	
 	import org.robotlegs.mvcs.Mediator;
 	
 	import spark.components.DataGrid;
 	import spark.components.gridClasses.GridColumn;
+	import spark.events.GridEvent;
 	
 	public class TriagedArticleListMediator extends Mediator
 	{
@@ -32,6 +32,8 @@ package edu.isi.bmkeg.triageModule.view
 		public var model:TriageModel;
 		
 		private var itemRendererClassFactory:ClassFactory;
+
+		private var forward:Boolean = true;
 		
 		override public function onRegister():void
 		{
@@ -69,7 +71,6 @@ package edu.isi.bmkeg.triageModule.view
 		{
 			
 			var dg:DataGrid = view.triageDocumentListDataGrid;
-			
 			dg.columns.removeAll();
 			
 			// pmid column
@@ -106,13 +107,80 @@ package edu.isi.bmkeg.triageModule.view
 				var corpus:Object = model.corpora.getItemAt(j);			
 				var colN:GridColumn = new GridColumn();
 				colN.headerText = corpus.vpdmfLabel;
-				colN.width = 80;
+				colN.width = 87;
 				colN.dataField = corpus.vpdmfLabel + ".inOut";
 				colN.itemRenderer = makeInOutPullDownItemRenderer;
+				colN.sortable = true;
 				o[corpus.vpdmfLabel] = "XXX";
 				dg.columns.addItem(colN);
 			}
+			
+			dg.columnHeaderGroup.addEventListener(
+				GridEvent.GRID_CLICK, 
+				cycleSortStateListener);
 						
+		}
+		
+		
+		/** 
+		 * Capture the click of the sort function.
+		 */ 
+		private function cycleSortStateListener( event:GridEvent ): void {
+	
+			var ts:TriageScore_qo = new TriageScore_qo();
+			var tc:TriageCorpus_qo = new TriageCorpus_qo();			
+			ts.triageCorpus = tc;
+			tc.vpdmfId = String(model.triageCorpus.vpdmfId);
+			
+			if( event.columnIndex == 0 ) {
+
+				var lcQo:ArticleCitation_qo = new ArticleCitation_qo();
+				ts.citation = lcQo;
+				lcQo.pmid = "<vpdmf-sort-0>"
+				
+				model.queryCorpusCount = model.corpora.length;	
+
+			} else if( event.columnIndex == 1 ) {
+
+				var lcQo2:ArticleCitation_qo = new ArticleCitation_qo();
+				ts.citation = lcQo2;
+				lcQo2.vpdmfLabel = "<vpdmf-sort-0>"
+
+				model.queryCorpusCount = model.corpora.length;	
+
+			} else {
+					
+				var sortCorpus:String = event.column.headerText;
+				var c:Corpus_qo = new Corpus_qo();			
+				ts.targetCorpus = c;
+				c.name = sortCorpus;
+				
+				if( this.forward ) {
+					ts.inOutCode = "<vpdmf-sort-0>";
+					this.forward = false;
+				} else {
+					ts.inOutCode = "<vpdmf-rev-sort-0>";
+					this.forward = true;
+				}
+				
+				ts.inScore = "<vpdmf-rev-sort-1>";
+						
+				model.queryCorpusCount = 1;	
+
+			}
+
+			this.dispatch(new ListTriagedArticlePagedEvent(
+				ts, 0, model.listPageSize));
+
+			
+		}
+		
+		private function triageScoreDataTip(item:Object, column:GridColumn):String 
+		{
+			var columnName:String = column.headerText;
+			var inOut:String = item[columnName + ".inOut"];
+			var score:String = item[columnName + ".score"];
+			return inOut + " (" + score + ")";
 		}
 		
 		// This function provides the means of dynamically generating item renderers

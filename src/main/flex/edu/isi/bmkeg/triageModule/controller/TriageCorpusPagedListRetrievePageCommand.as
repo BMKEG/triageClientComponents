@@ -30,9 +30,10 @@ package edu.isi.bmkeg.triageModule.controller
 				// corpora being processed.
 				var offset:int = event.offset;
 				var count:int = event.count;
-				var nCorpora:int = model.corpora.length;
 				
-				this.dispatch(new ListTriageScoreListPagedEvent(
+				var nCorpora:int = model.queryCorpusCount;
+				
+				this.dispatch(new ListTriagedArticlePagedEvent(
 						model.queryTriagedDocument, 
 						event.offset * nCorpora, 
 						event.count * nCorpora));

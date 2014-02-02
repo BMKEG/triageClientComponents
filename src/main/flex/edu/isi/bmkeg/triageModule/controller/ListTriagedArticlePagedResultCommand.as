@@ -14,11 +14,14 @@ package edu.isi.bmkeg.triageModule.controller
 	
 	import org.robotlegs.mvcs.Command;
 	
-	public class ListTriageScoreListPagedResultCommand extends Command
+	public class ListTriagedArticlePagedResultCommand extends Command
 	{
 		
 		[Inject]
-		public var event:ListTriageScoreListPagedResultEvent;
+		public var event:ListTriagedArticlePagedResultEvent;
+
+		[Inject]
+		public var triageModel:TriageModel;
 		
 		[Inject]
 		public var listModel:TriageCorpusPagedListModel;
@@ -60,20 +63,14 @@ package edu.isi.bmkeg.triageModule.controller
 				o2[c + ".inOut"] = o["TriagedArticle_2"];
 				
 			}
-	
-			var sortField:SortField = new SortField();
-			sortField.name = "pmid";
-			sortField.numeric = true;
-			var dataSort:Sort = new Sort();
-			dataSort.fields = [sortField];
-			
-			l.sort = dataSort;
-			l.refresh();
+				
+			var nCorpora:int = triageModel.queryCorpusCount;
+			var offset:int = event.offset / nCorpora;
 			
 			if( event.offset == 0 ) {
-				listModel.storeObjectsAt(event.offset, l.toArray(), true);
+				listModel.storeObjectsAt(offset, l.toArray(), true);
 			} else {
-				listModel.storeObjectsAt(event.offset, l.toArray(), false);
+				listModel.storeObjectsAt(offset, l.toArray(), false);
 			}
 			
 		}

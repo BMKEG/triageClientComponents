@@ -40,8 +40,8 @@ package edu.isi.bmkeg.triageModule.view
 			addContextListener(FindArticleCitationDocumentByIdResultEvent.FIND_ARTICLECITATIONDOCUMENTBY_ID_RESULT, 
 				findArticleCitationDocumentByIdResultHandler);
 
-			addContextListener(ListTriageScoreListPagedEvent.LIST_TRIAGESCORELIST_PAGED, 
-				listTriageScoreListPagedHandler);
+			addContextListener(ListTriagedArticlePagedEvent.LIST_TRIAGEDARTICLE_PAGED, 
+				listTriagedArticlePagedHandler);
 			
 			loadCurrentSelection();
 		}
@@ -52,7 +52,7 @@ package edu.isi.bmkeg.triageModule.view
 		
 		}
 
-		private function listTriageScoreListPagedHandler(event:ListTriageScoreListPagedEvent):void {
+		private function listTriagedArticlePagedHandler(event:ListTriagedArticlePagedEvent):void {
 			
 			loadCurrentSelection();
 			

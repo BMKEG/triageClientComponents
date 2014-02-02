@@ -10,11 +10,11 @@ package edu.isi.bmkeg.triageModule.controller
 
 	import flash.events.Event;
 	
-	public class ListTriageScoreListPagedCommand extends Command
+	public class ListTriagedArticlePagedCommand extends Command
 	{
 	
 		[Inject]
-		public var event:ListTriageScoreListPagedEvent;
+		public var event:ListTriagedArticlePagedEvent;
 
 		[Inject]
 		public var model:TriageModel;
@@ -27,7 +27,7 @@ package edu.isi.bmkeg.triageModule.controller
 			
 			model.queryTriagedDocument = event.object;	
 
-			service.listTriageScoreListPaged(event.object, event.offset, event.cnt);
+			service.listTriagedArticlePaged(event.object, event.offset, event.cnt);
 			
 			model.currentCitation = null;
 		}

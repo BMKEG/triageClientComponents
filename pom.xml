@@ -69,9 +69,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.devaldi</groupId>
-			<artifactId>flexpaper</artifactId>
-			<version>2.1.1-4.5mods</version>
+			<groupId>edu.isi.bmkeg</groupId>
+			<artifactId>digitalLibraryClientComponents</artifactId>
 			<type>swc</type>
 		</dependency>
 		

@@ -8,12 +8,13 @@
 		<s:VerticalLayout/>
 	</s:layout>
 	<fx:Declarations>
-		<s:AsyncListView id="asyncListView" list="{triageDocumentsList}" createPendingItemFunction="createPendingItem"/>
+		<s:AsyncListView id="asyncListView" 
+						 list="{triageDocumentsList}" 
+						 createPendingItemFunction="createPendingItem"/>
 	</fx:Declarations>
 	
 	<fx:Script>
 		<![CDATA[
-			
 			import edu.isi.bmkeg.digitalLibrary.model.qo.citations.*;
 			import edu.isi.bmkeg.triage.model.qo.*;
 			import edu.isi.bmkeg.triage.rl.events.*;
@@ -23,6 +24,7 @@
 			import mx.collections.errors.ItemPendingError;
 			
 			import spark.events.GridSelectionEvent;
+			import spark.events.GridSortEvent;
 			
 			[Bindable]
 			public var listLength:int;
