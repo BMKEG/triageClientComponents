@@ -56,6 +56,11 @@ package edu.isi.bmkeg.triage.services.serverInteraction.impl
 			return getOperation("transferTriageInsToArticleCorpora");
 		}
 		
+		public function get switchInOutCodes():AbstractOperation
+		{
+			return getOperation("switchInOutCodes");
+		}
+		
 	}
 
 }

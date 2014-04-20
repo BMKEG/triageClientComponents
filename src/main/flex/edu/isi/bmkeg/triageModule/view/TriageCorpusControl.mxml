@@ -66,17 +66,19 @@
 				
 			protected function addButton_clickHandler(event:MouseEvent):void
 			{
-				this.dispatchEvent(new ActivateCorpusPopupEvent(new Corpus()));
+				this.dispatchEvent(new ActivateTriageCorpusPopupEvent(new TriageCorpus()));
 			}
 			
 			protected function corpusCombo_doubleClickHandler(event:MouseEvent):void
 			{				
-				this.dispatchEvent(new ActivateCorpusPopupEvent(this.triageCorpus));
+				this.dispatchEvent(new ActivateTriageCorpusPopupEvent(this.triageCorpus));
 			}
 			
 			protected function removeButton_clickHandler(event:MouseEvent):void
 			{
-				this.dispatchEvent( new DeleteTriageCorpusByIdEvent(this.triageCorpus.vpdmfId) );
+				if( this.triageCorpus != null ) {
+					this.dispatchEvent( new DeleteTriageCorpusByIdEvent(this.triageCorpus.vpdmfId) );
+				}
 			}
 
 			protected function uploadButton_clickHandler(event:MouseEvent):void

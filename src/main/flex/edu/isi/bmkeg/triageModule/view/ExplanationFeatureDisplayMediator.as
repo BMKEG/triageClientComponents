@@ -84,6 +84,15 @@ package edu.isi.bmkeg.triageModule.view
 			addContextListener(
 				GenerateRuleFileFromLapdfResultEvent.GENERATE_RULE_FILE_FROM_LAPDF_RESULT, 
 				updateCsv);
+			
+			addContextListener(LoadSwfResultEvent.LOAD_SWF_RESULT, 
+				swfFileLoadResult);
+			
+			addContextListener(LoadXmlResultEvent.LOAD_XML_RESULT, 
+				xmlFileLoadResult);
+			
+			addContextListener(LoadHtmlResultEvent.LOAD_HTML_RESULT, 
+				htmlFileLoadResult);
 
 			if( model.currentCitation != null ) {
 				this.buildBitmaps( model.currentCitation.vpdmfId );
@@ -162,40 +171,18 @@ package edu.isi.bmkeg.triageModule.view
 			//
 			// First, get the swf file on the server for the images
 			//
-			var url:String = "/" + Utils.getWebAppContext();
-								
-			url = Utils.getServerProt() + "/" + url + 
-				"/rest/load?swfFile=" + vpdmfId + ".swf";
-		
-			var ldr:Loader = new Loader(); 
-			ldr.contentLoaderInfo.addEventListener(Event.COMPLETE,swfFileLoadResult);  
-			var fldr:ForcibleLoader = new ForcibleLoader(ldr);
-			fldr.load(new URLRequest(url));
+			this.dispatch( new LoadSwfEvent(vpdmfId) );
 			
 			//
 			// Next, get the xml for the page boxes
 			//
-			url = "/" + Utils.getWebAppContext();
-			
-			url = Utils.getServerProt() + "/" + url + 
-				"/rest/load?xmlFile=" + vpdmfId + ".xml";
-			
-			var urlLdr:URLLoader = new URLLoader(); 
-			urlLdr.addEventListener(Event.COMPLETE,xmlFileLoadResult);  
-			urlLdr.load(new URLRequest(url));
+			this.dispatch( new LoadXmlEvent(vpdmfId) );
 			
 			//
 			// Finally, get the html for the text of the document 
 			// (this is the end product that we will annotate)
 			//
-			url = "/" + Utils.getWebAppContext();
-			
-			url = Utils.getServerProt() + "/" + url + 
-				"/rest/load?html=" + vpdmfId + ".html";
-			
-			urlLdr = new URLLoader(); 
-			urlLdr.addEventListener(Event.COMPLETE, htmlFileLoadResult);  
-			urlLdr.load(new URLRequest(url));
+			this.dispatch( new LoadHtmlEvent(vpdmfId) );
 			
 			view.bitmaps = new ArrayCollection();
 			
@@ -217,13 +204,10 @@ package edu.isi.bmkeg.triageModule.view
 			
 		}
 
-		private function swfFileLoadResult(event:Event):void {
-
-			if( !event.target )
-				return;
+		private function swfFileLoadResult(event:LoadSwfResultEvent):void {
 			
-			var clip:MovieClip = event.currentTarget.content as MovieClip;
-			
+			var clip:MovieClip = model.swf;
+						
 			var frames:int = clip.totalFrames;
 			
 			for(var i:int=1; i<=frames; i++){
@@ -244,13 +228,10 @@ package edu.isi.bmkeg.triageModule.view
 			
 		}
 		
-		private function xmlFileLoadResult(event:Event):void {
+		private function xmlFileLoadResult(event:LoadXmlResultEvent):void {
 			
-			if( !event.target )
-				return;
-			
-			xml = XML(event.currentTarget.data);
-			
+			xml = XML(event.xml);
+				
 			//
 			// Build the spatial index of the PDF content here. 
 			//
@@ -312,14 +293,14 @@ package edu.isi.bmkeg.triageModule.view
 		
 		}
 		
-		private function htmlFileLoadResult(event:Event):void {
+		private function htmlFileLoadResult(event:LoadHtmlResultEvent):void {
 			
-			if( event.currentTarget == null )
-				return;
+			var htmlString:String = model.pmcHtml;
 			
-			this.dispatch( 
-				new HtmlTextLoadedFromPdfEvent(event.currentTarget.data)
-			);
+			/*if( htmlString != null ) {
+				view.lapdfTextControl.textFlow = TextConverter.importToFlow(
+					htmlString, TextConverter.TEXT_FIELD_HTML_FORMAT);
+			}*/
 			
 		}
 		

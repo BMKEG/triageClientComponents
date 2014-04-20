@@ -1,4 +1,4 @@
-package edu.isi.bmkeg.triageModule.events
+package edu.isi.bmkeg.triage.events
 {
 	
 	import flash.events.Event;
@@ -13,19 +13,22 @@ package edu.isi.bmkeg.triageModule.events
 		/**
 		 * selected Article or null if none is selected
 		 */
+		public var scoreId:Number;
 		public var code:String;
 		
-		public function SwitchInOutEvent(code:String, 
-												 bubbles:Boolean=false, 
-												 cancelable:Boolean=false)
+		public function SwitchInOutEvent(scoreId:Number, 
+										 code:String, 
+										 bubbles:Boolean=false, 
+										 cancelable:Boolean=false)
 		{
 			super(SWITCH, bubbles, cancelable);
+			this.scoreId = scoreId;
 			this.code = code;
 		}
 
 		override public function clone():Event
 		{
-			return new SwitchInOutEvent(code, bubbles, cancelable)
+			return new SwitchInOutEvent(scoreId, code, bubbles, cancelable)
 		}
 
 	}

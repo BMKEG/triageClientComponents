@@ -27,6 +27,8 @@ package edu.isi.bmkeg.triage.services
 		
 		function transferTriageInsToArticleCorpora():void;
 		
+		function switchInOutCodes(scoreId:Number, code:String):void;
+
 	}
 
 }

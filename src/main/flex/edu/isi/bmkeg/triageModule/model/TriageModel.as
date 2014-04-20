@@ -9,6 +9,7 @@ package edu.isi.bmkeg.triageModule.model
 	import edu.isi.bmkeg.vpdmf.model.instances.LightViewInstance;
 	
 	import flash.utils.Dictionary;
+	import flash.display.*;
 	
 	import mx.collections.ArrayCollection;
 	import mx.utils.UIDUtil;
@@ -44,6 +45,8 @@ package edu.isi.bmkeg.triageModule.model
 		public var classificationModels:ArrayCollection = new ArrayCollection();
 
 		public var rulesets:ArrayCollection = new ArrayCollection();
+
+		public var swf:MovieClip;
 		
 		// An array of adapted org.ffilmation.utils.rtree.fRTree objects 
 		public var rTreeArray:ArrayCollection = new ArrayCollection();

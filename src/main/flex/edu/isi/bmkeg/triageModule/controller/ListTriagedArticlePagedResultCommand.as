@@ -51,14 +51,15 @@ package edu.isi.bmkeg.triageModule.controller
 					o2 = hash[pmid];
 				} else {
 					hash[pmid] = o2;	
-					o2["pmid"] = pmid;
 					o2["vpdmfId"] = lvi.vpdmfId;
+					o2["pmid"] = pmid;
 					o2["citation"] = o["ArticleCitation"];
 					o2["triagedCorpus"] = o["TriageCorpus"];
 					l.addItem(o2);
 				}
 
 				var c:String = String(o["TriagedArticle_4"]);
+				o2[c + ".vpdmfId"] = lvi.vpdmfId;
 				o2[c + ".score"] = o["TriagedArticle_3"];
 				o2[c + ".inOut"] = o["TriagedArticle_2"];
 				

@@ -19,8 +19,6 @@ package edu.isi.bmkeg.triage.services.impl
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	import flash.utils.ByteArray;
-
 	import org.robotlegs.mvcs.Actor;
 
 	public class ExtendedTriageServiceImpl extends Actor implements IExtendedTriageService {
@@ -151,6 +149,23 @@ package edu.isi.bmkeg.triage.services.impl
 			
 			var success:Boolean = Boolean(event.result);
 			dispatch(new TransferTriageInsToArticleCorporaResultEvent(success));
+			
+		}
+		
+		//~~~~~~~~~~~~~~~~~~~
+		
+		public function switchInOutCodes(scoreId:Number, code:String):void {
+			
+			server.switchInOutCodes.cancel();
+			server.switchInOutCodes.addEventListener(ResultEvent.RESULT, switchInOutResultHandler);
+			server.switchInOutCodes.addEventListener(FaultEvent.FAULT, faultHandler);
+			server.switchInOutCodes.send(scoreId, code);
+			
+		}
+		
+		private function switchInOutResultHandler(event:ResultEvent):void {
+			
+			dispatch(new SwitchInOutResultEvent());
 			
 		}
 		

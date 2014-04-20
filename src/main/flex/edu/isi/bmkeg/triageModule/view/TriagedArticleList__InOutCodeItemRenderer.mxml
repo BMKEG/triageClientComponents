@@ -16,7 +16,7 @@
 		<![CDATA[
 			import com.devaldi.controls.flexpaper.About;
 			
-			import edu.isi.bmkeg.triageModule.events.*;
+			import edu.isi.bmkeg.triage.events.*;
 			
 			import flash.display.Sprite;
 			
@@ -107,24 +107,29 @@
 				var list:DropDownList = DropDownList(event.currentTarget);
 				var val:String = list.selectedItem;
 				
-				var existingValue:String = data[column.dataField];
-				
-				if( existingValue == val )
+				if( (data[column.dataField] == SwitchInOutEvent.UNCLASSIFIED && val == "?") ||
+						(data[column.dataField] == SwitchInOutEvent.IN && val == "+") ||
+						(data[column.dataField] == SwitchInOutEvent.OUT && val == "-")) {
 					return;
+				}					
 				
-				if( val == SwitchInOutEvent.IN ) {
+				var c:String = column.dataField;
+				c = c.substr(0,c.length-6);
+				var scoreId:Number = Number( data[c + ".vpdmfId"] );
+				
+				if( val == "+" ) {
 					
-					dispatchEvent( new SwitchInOutEvent(
+					dispatchEvent( new SwitchInOutEvent(scoreId, 
 						SwitchInOutEvent.IN, true, false) );					
 					
-				} else if( val == SwitchInOutEvent.OUT ) {
+				} else if( val == "-" ) {
 					
-					dispatchEvent( new SwitchInOutEvent(
+					dispatchEvent( new SwitchInOutEvent(scoreId,
 						SwitchInOutEvent.OUT, true, false) );					
 					
-				} else if( val == SwitchInOutEvent.UNCLASSIFIED ) {
+				} else if( val == "?" ) {
 					
-					dispatchEvent( new SwitchInOutEvent(
+					dispatchEvent( new SwitchInOutEvent(scoreId,
 						SwitchInOutEvent.UNCLASSIFIED, true, false) );					
 					
 				} 

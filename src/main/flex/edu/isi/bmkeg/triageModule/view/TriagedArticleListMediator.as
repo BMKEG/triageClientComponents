@@ -51,7 +51,7 @@ package edu.isi.bmkeg.triageModule.view
 				dispatch);
 			
 			addViewListener(SwitchInOutEvent.SWITCH, 
-				switchInOutCodes);
+				dispatch);
 			
 			listModel.pageSize = model.listPageSize;
 			
@@ -202,16 +202,6 @@ package edu.isi.bmkeg.triageModule.view
 			
 			view.triageDocumentsList = listModel.pagedList;
 			view.listLength = listModel.pagedListLength;
-			
-		}
-
-		
-		private function switchInOutCodes(event:SwitchInOutEvent):void {
-			
-			var td:TriageScore = TriageScore(model.currentCitation.triageScores.getItemAt(0));
-			td.inOutCode = event.code;
-			
-			dispatch( new UpdateTriagedArticleEvent(td) ); 
 			
 		}
 		

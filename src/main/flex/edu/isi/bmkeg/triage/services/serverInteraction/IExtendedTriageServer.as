@@ -18,6 +18,8 @@ package edu.isi.bmkeg.triage.services.serverInteraction
 		
 		function get transferTriageInsToArticleCorpora():AbstractOperation;
 
+		function get switchInOutCodes():AbstractOperation;
+		
 	}
 
 }

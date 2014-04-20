@@ -76,13 +76,13 @@
 		
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
-			<artifactId>triage-as-services</artifactId>
+			<artifactId>vpdmf-triage-as-services</artifactId>
 			<type>swc</type>
 		</dependency>
 		
 		<dependency>
 			<groupId>edu.isi.bmkeg</groupId>
-			<artifactId>triage-as</artifactId>
+			<artifactId>vpdmf-triage-as</artifactId>
 			<type>swc</type>
 		</dependency>
 		

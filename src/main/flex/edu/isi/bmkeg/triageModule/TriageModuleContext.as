@@ -4,6 +4,10 @@ package edu.isi.bmkeg.triageModule
 	
 	import edu.isi.bmkeg.digitalLibrary.model.qo.citations.Corpus_qo;
 	import edu.isi.bmkeg.digitalLibrary.events.*;
+	import edu.isi.bmkeg.digitalLibrary.services.IExtendedDigitalLibraryService;
+	import edu.isi.bmkeg.digitalLibrary.services.impl.ExtendedDigitalLibraryServiceImpl;
+	import edu.isi.bmkeg.digitalLibrary.services.serverInteraction.IExtendedDigitalLibraryServer;
+	import edu.isi.bmkeg.digitalLibrary.services.serverInteraction.impl.ExtendedDigitalLibraryServerImpl;
 	import edu.isi.bmkeg.digitalLibrary.rl.events.*;
 	import edu.isi.bmkeg.digitalLibrary.rl.events.ListTargetArticleListPagedEvent;
 	import edu.isi.bmkeg.digitalLibrary.rl.services.IDigitalLibraryService;
@@ -65,6 +69,7 @@ package edu.isi.bmkeg.triageModule
 			// Need a bit of extra detail to deal with popups
 			mediatorMap.mapView(UploadPdfsPopup, UploadPdfsPopupMediator, null, false, false);
 			mediatorMap.mapView(ClassifierPopup, ClassifierPopupMediator, null, false, false);
+			mediatorMap.mapView(TriageCorpusPopup, TriageCorpusPopupMediator, null, false, false);
 			
 			injector.mapSingleton(TriageModel);
 			injector.mapSingleton(TriageCorpusPagedListModel);
@@ -75,6 +80,8 @@ package edu.isi.bmkeg.triageModule
 			injector.mapSingletonOf(IExtendedTriageServer, ExtendedTriageServerImpl);
 			injector.mapSingletonOf(IDigitalLibraryService, DigitalLibraryServiceImpl);
 			injector.mapSingletonOf(IDigitalLibraryServer, DigitalLibraryServerImpl);
+			injector.mapSingletonOf(IExtendedDigitalLibraryService, ExtendedDigitalLibraryServiceImpl);
+			injector.mapSingletonOf(IExtendedDigitalLibraryServer, ExtendedDigitalLibraryServerImpl);
 			injector.mapSingletonOf(IFtdServer, FtdServerImpl);
 			injector.mapSingletonOf(IFtdService, FtdServiceImpl);
 
@@ -87,6 +94,20 @@ package edu.isi.bmkeg.triageModule
 			// pushed messages from the server.
 			commandMap.mapEvent(ServerUpdateEvent.SERVER_UPDATE, 
 				ServerUpdateCommand);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// insert, update and delete triage corpora on server
+			commandMap.mapEvent(DeleteTriageCorpusByIdEvent.DELETE_TRIAGECORPUS_BY_ID, DeleteTriageCorpusByIdCommand);
+			commandMap.mapEvent(DeleteTriageCorpusByIdResultEvent.DELETE_TRIAGECORPUS_BY_ID_RESULT, 
+				DeleteTriageCorpusByIdResultCommand);
+			
+			commandMap.mapEvent(InsertTriageCorpusEvent.INSERT_TRIAGECORPUS, InsertTriageCorpusCommand);
+			commandMap.mapEvent(InsertTriageCorpusResultEvent.INSERT_TRIAGECORPUS_RESULT, 
+				InsertTriageCorpusResultCommand);
+			
+			commandMap.mapEvent(UpdateTriageCorpusEvent.UPDATE_TRIAGECORPUS, UpdateTriageCorpusCommand);
+			commandMap.mapEvent(UpdateTriageCorpusResultEvent.UPDATE_TRIAGECORPUS_RESULT, 
+				UpdateTriageCorpusResultCommand);
 			
 			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 			// list the corpora on the server
@@ -188,6 +209,31 @@ package edu.isi.bmkeg.triageModule
 			commandMap.mapEvent(RunClassifierPredictResultEvent.RUN_CLASSIFIER_PREDICT_RESULT, 
 				RunClassifierPredictResultCommand);
 
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Switch In / Out codes for a triage score
+			commandMap.mapEvent(SwitchInOutEvent.SWITCH, 
+				SwitchInOutCommand);
+
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Load the swf
+			commandMap.mapEvent(LoadSwfEvent.LOAD_SWF, LoadSwfCommand);
+			commandMap.mapEvent(LoadSwfResultEvent.LOAD_SWF_RESULT, LoadSwfResultCommand);
+			
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Load the xml
+			commandMap.mapEvent(LoadXmlEvent.LOAD_XML, LoadXmlCommand);
+			commandMap.mapEvent(LoadXmlResultEvent.LOAD_XML_RESULT, LoadXmlResultCommand);
+			
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Load the pmcxml
+			commandMap.mapEvent(LoadPmcXmlEvent.LOAD_PMCXML, LoadPmcXmlCommand);
+			commandMap.mapEvent(LoadPmcXmlResultEvent.LOAD_PMCXML_RESULT, LoadPmcXmlResultCommand);
+			
+			// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+			// Load the html
+			commandMap.mapEvent(LoadHtmlEvent.LOAD_HTML, LoadHtmlCommand);
+			commandMap.mapEvent(LoadHtmlResultEvent.LOAD_HTML_RESULT, LoadHtmlResultCommand);
+			
 			commandMap.mapEvent(ClearTriageCorpusEvent.CLEAR_TRIAGE_CORPUS, ClearTriageCorpusCommand);
 
 			this.dispatchEvent(new ListCorpusEvent( new Corpus_qo() ));

@@ -31,9 +31,15 @@ package edu.isi.bmkeg.triageModule.view
 			// List the triage corpora. 
 			addViewListener(ListTriageCorpusEvent.LIST_TRIAGECORPUS, 
 				dispatch);
+
+			addViewListener(ActivateTriageCorpusPopupEvent.ACTIVATE_TRIAGE_CORPUS_POPUP, 
+				activateTriageCorpusPopup);
 			
 			addViewListener(ActivateUploadPdfPopupEvent.ACTIVATE_PDF_UPLOAD_POPUP, 
 				activatePdfUploadPopup);
+
+			addViewListener(DeleteTriageCorpusByIdEvent.DELETE_TRIAGECORPUS_BY_ID, 
+				dispatch);
 
 			addViewListener(ActivateClassifierPopupEvent.ACTIVATE_CLASSIFIER_POPUP, 
 				activateClassifierPopup);
@@ -169,6 +175,26 @@ package edu.isi.bmkeg.triageModule.view
 						
 		}
 		
+		private function activateTriageCorpusPopup(e:ActivateTriageCorpusPopupEvent):void {
+			
+			var popup:TriageCorpusPopup = PopUpManager.createPopUp(this.view, TriageCorpusPopup, true) as TriageCorpusPopup;
+			PopUpManager.centerPopUp(popup);
+			
+			mediatorMap.createMediator( popup );
+			
+			if( e.corpus == null || e.corpus.name == null )			
+				popup.cName.text = "";
+			else 
+				popup.cName.text = e.corpus.name;
+			
+			if( e.corpus == null || e.corpus.description == null )			
+				popup.desc.text = "";
+			else 
+				popup.desc.text = e.corpus.description;
+			
+			popup.vpdmfId = e.corpus.vpdmfId;
+			
+		}
 		
 		
 		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
